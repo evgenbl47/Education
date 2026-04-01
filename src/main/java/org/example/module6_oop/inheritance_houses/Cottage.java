@@ -24,15 +24,39 @@ public class Cottage extends House {
 
     @Override
     public void showInfo() {
+        if (hasGarden) {
+            System.out.println("Building: " + getType() +
+                    ", address: " + address +
+                    ", square: " + square +
+                    " sq.m, yearBuilt: " + yearBuilt +
+                    ", hasGarden: " + hasGarden +
+                    ", gardenSize: " + gardenSize + " sq.m");
+        } else {
             System.out.println("Building: " + getType() +
                     ", address: " + address +
                     ", square: " + square +
                     "sq.m, yearBuilt: " + yearBuilt +
-                    ", hasGarden: " + hasGarden +
-                    ", gardenSize: " + gardenSize +"sq.m");
+                    " | No garden");
+        }
     }
 
     public void plantTree() {
         System.out.println("🌳 Tree planted in garden!");
+    }
+
+    public boolean hasGarden() {
+        return hasGarden;
+    }
+
+    public int getGardenSize() {
+        return gardenSize;
+    }
+
+    public void setGardenSize(int gardenSize) {
+        if (gardenSize > 0) {
+            this.gardenSize = gardenSize;
+        }else{
+            this.gardenSize = 0;
+        }
     }
 }

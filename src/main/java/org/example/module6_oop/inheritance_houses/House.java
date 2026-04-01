@@ -17,7 +17,11 @@ public class House {
     }
 
     public void showInfo() {
-        System.out.println("Building: " + getType() + ",address: " + address + ", square: " + square + "sq.m, yearBuilt: " + yearBuilt);
+// Вывод: Building: House, address: Lenina 10, square: 50 sq.m, year built: 1990
+        System.out.println("Building: " + getType() +
+                ", address: " + address +
+                ", square: " + square +
+                " sq.m, year built: " + yearBuilt);
     }
 
     @Override

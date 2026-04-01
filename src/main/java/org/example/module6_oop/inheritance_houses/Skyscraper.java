@@ -18,15 +18,37 @@ public class Skyscraper extends House {
 
     @Override
     public void showInfo() {
-        System.out.println("Building: " + getType() +
-                ", address: " + address +
-                ", square: " + square +
-                "sq.m, yearBuilt: " + yearBuilt +
-                ", floors: " + floors +
-                ", hasElevator: " + hasElevator);
+        if (hasElevator) {
+            System.out.println("Building: " + getType() +
+                    ", address: " + address +
+                    ", square: " + square +
+                    " sq.m, yearBuilt: " + yearBuilt +
+                    ", floors: " + floors +
+                    ", hasElevator: " + hasElevator);
+        } else {
+            System.out.println("Building: " + getType() +
+                    ", address: " + address +
+                    ", square: " + square +
+                    " sq.m, yearBuilt: " + yearBuilt +
+                    ", floors: " + floors);
+        }
+
     }
 
-    void goToFloor(int floor) {
-        System.out.println("🛗 Elevator to floor N");
+    public void goToFloor(int floor) {
+        System.out.println("🔳 Elevator to floor: "+ floor);
     }
+
+    public int getFloors() {
+        return floors;
+    }
+
+    public void setFloors(int floors) {
+        this.floors = floors;
+    }
+
+    public boolean hasElevator() {
+        return hasElevator;
+    }
+
 }

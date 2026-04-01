@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Deep Dive: Type Casting & Polymorphism</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #c0392b;
+            margin-top: 40px;
+            border-left: 4px solid #e74c3c;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #d35400;
+            margin-top: 25px;
+        }
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #444;
+            margin: 15px 0;
+        }
+        pre {
+            white-space: pre;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .keyword { color: #c678dd; font-weight: bold; }
+        .type { color: #e5c07b; }
+        .method { color: #61afef; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .cast { color: #ff6b6b; font-weight: bold; }
+
+        /* Карточки и блоки */
+        .box {
+            background: #fff;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .step {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .analogy {
+            background: #f0f8ff;
+            border: 1px solid #add8e6;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        /* Таблицы */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #3498db;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        tr:hover {
+            background: #e3f2fd;
+        }
+
+        /* Визуальная диаграмма в виде блоков */
+        .diagram-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        .diagram-box {
+            background: #fff;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 250px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .diagram-box .title {
+            background: #3498db;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .diagram-box .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .diagram-box .row:last-child {
+            border-bottom: none;
+        }
+        .diagram-box .label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .diagram-box .value {
+            color: #27ae60;
+            font-family: monospace;
+        }
+        .arrow {
+            text-align: center;
+            font-size: 24px;
+            color: #3498db;
+            margin: 10px 0;
+        }
+
+        /* Блок сравнения до/после */
+        .comparison {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .comparison .side {
+            flex: 1;
+            min-width: 300px;
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .comparison .side.before {
+            border-color: #e74c3c;
+        }
+        .comparison .side.after {
+            border-color: #27ae60;
+        }
+        .comparison .side .header {
+            text-align: center;
+            padding: 10px;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .comparison .side.before .header {
+            background: #e74c3c;
+        }
+        .comparison .side.after .header {
+            background: #27ae60;
+        }
+
+        footer {
+            margin-top: 60px;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+        }
+
+        /* Список в шагах */
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+        .step-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 40px;
+            margin: 10px 0;
+        }
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #3498db;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔍 Deep Dive: Приведение типов (Casting)</h1>
+<p>Разбираем подробно: <code>(Cottage) cottage</code> и <code>((Skyscraper) s).goToFloor()</code></p>
+
+<div class="box">
+    <h3>🎯 Короткий ответ</h3>
+    <p><b>Приведение типа</b> — это способ сказать компилятору:</p>
+    <p><i>«Я знаю, что эта ссылка выглядит как <code>House</code>, но я гарантирую, что внутри лежит <code>Cottage</code>. Пожалуйста, разреши мне использовать методы <code>Cottage</code>».</i></p>
+</div>
+
+<h2>1. Контекст: Полиморфизм и «потеря» методов</h2>
+
+<div class="code-block">
+<pre><span class="comment">// Создаём объект</span>
+<span class="type">House</span> cottage = <span class="keyword">new</span> <span class="type">Cottage</span>(<span class="string">"Forest 5"</span>, 120, 2020, <span class="keyword">true</span>, 300);
+
+<span class="comment">// Что видит компилятор?</span>
+<span class="comment">// 👀 Тип ссылки: House</span>
+<span class="comment">// 📦 Реальный объект: Cottage</span></pre>
+</div>
+
+<h3>📊 Визуализация переменной</h3>
+
+<div class="diagram-container">
+    <div class="diagram-box">
+        <div class="title">📦 Переменная "cottage"</div>
+        <div class="row">
+            <span class="label">Тип ссылки:</span>
+            <span class="value">House</span>
+        </div>
+        <div class="row">
+            <span class="label">Что видит компилятор:</span>
+            <span class="value">Только методы House</span>
+        </div>
+        <div class="row">
+            <span class="label">Адрес в памяти:</span>
+            <span class="value">→ [Cottage]</span>
+        </div>
+        <div class="row">
+            <span class="label">Что видит JVM:</span>
+            <span class="value">Все методы Cottage</span>
+        </div>
+    </div>
+</div>
+
+<div class="step">
+    <b>🔎 Ключевая проблема:</b>
+    <ul class="step-list">
+        <li><b>Компилятор</b> (когда ты пишешь код) проверяет только <b>тип ссылки</b> (<code>House</code>). Он говорит: «У <code>House</code> нет метода <code>plantTree()</code> — ошибка!»</li>
+        <li><b>JVM</b> (когда программа работает) видит реальный объект (<code>Cottage</code>) и <i>могла бы</i> вызвать метод, но компилятор её не пускает.</li>
+    </ul>
+</div>
+
+<h2>2. Решение: Downcasting (приведение вниз)</h2>
+
+<p>Чтобы «вернуть» доступ к методам <code>Cottage</code>, нужно явно <b>привести тип</b>.</p>
+
+<div class="code-block">
+<pre><span class="comment">// Синтаксис: (Тип) переменная</span>
+<span class="type">Cottage</span> c = (<span class="type">Cottage</span>) cottage;  <span class="comment">// 👈 Приведение типа</span>
+c.<span class="method">plantTree</span>();                <span class="comment">// 👈 Теперь работает!</span></pre>
+</div>
+
+<div class="step">
+    <b>🔎 Пошаговый разбор:</b>
+    <ul class="step-list">
+        <li><code>(Cottage)</code> — оператор приведения. Говорит: «Считай, что это Cottage».</li>
+        <li><code>cottage</code> — исходная переменная типа <code>House</code>.</li>
+        <li><code>Cottage c = ...</code> — создаём <b>новую ссылку</b> типа <code>Cottage</code>, которая указывает на тот же объект.</li>
+        <li>Теперь через <code>c</code> компилятор разрешает вызывать <code>plantTree()</code>.</li>
+    </ul>
+</div>
+
+<h2>3. Два способа записи</h2>
+
+<h3>🅰️ Вариант 1: С промежуточной переменной (рекомендуется)</h3>
+<div class="code-block">
+<pre><span class="keyword">if</span> (cottage <span class="keyword">instanceof</span> <span class="type">Cottage</span>) {
+    <span class="type">Cottage</span> c = (<span class="type">Cottage</span>) cottage;  <span class="comment">// Создаём "понятную" ссылку</span>
+    c.<span class="method">plantTree</span>();                  <span class="comment">// Читаемо и безопасно</span>
+}</pre>
+</div>
+<p>✅ <b>Плюсы:</b> Код легче читать, можно использовать <code>c</code> несколько раз.</p>
+
+<h3>🅱️ Вариант 2: Без переменной (коротко)</h3>
+<div class="code-block">
+<pre><span class="keyword">if</span> (cottage <span class="keyword">instanceof</span> <span class="type">Cottage</span>) {
+    ((<span class="type">Cottage</span>) cottage).<span class="method">plantTree</span>();  <span class="comment">// 👈 Двойные скобки!</span>
+}</pre>
+</div>
+
+<div class="step">
+    <b>🔎 Почему двойные скобки?</b>
+    <ul class="step-list">
+        <li>Внутренние <code>(Cottage) cottage</code> — приводят тип.</li>
+        <li>Внешние <code>( ... ).method()</code> — говорят: «вызови метод у <b>результата приведения</b>».</li>
+        <li>Без внешних скобок компилятор подумает, что ты пытаешься привести к типу результат вызова метода — и выдаст ошибку.</li>
+    </ul>
+</div>
+
+<h2>4. Аналогия из жизни 🏠</h2>
+
+<div class="analogy">
+    <h3>📦 Коробка с ключами</h3>
+    <p>У тебя есть <b>коробка с надписью «Дом»</b> (<code>House</code>).</p>
+    <p>Внутри лежит <b>ключ от коттеджа</b> (<code>Cottage</code>), который может открыть садовую калитку (<code>plantTree()</code>).</p>
+
+    <table style="margin-top: 15px;">
+        <tr>
+            <th>Шаг</th>
+            <th>Действие</th>
+            <th>Код</th>
+        </tr>
+        <tr>
+            <td>1️⃣</td>
+            <td>Проверить: «А точно ли внутри коттедж?»</td>
+            <td><code>instanceof</code></td>
+        </tr>
+        <tr>
+            <td>2️⃣</td>
+            <td>Переподписать коробку: «Теперь это Коттедж»</td>
+            <td><code>(Cottage)</code></td>
+        </tr>
+        <tr>
+            <td>3️⃣</td>
+            <td>Теперь можно сказать: «Открой калитку!»</td>
+            <td><code>plantTree()</code></td>
+        </tr>
+    </table>
+</div>
+
+<h2>5. Upcasting vs Downcasting</h2>
+
+<table>
+    <tr>
+        <th style="width: 20%;">Тип</th>
+        <th style="width: 25%;">Направление</th>
+        <th style="width: 30%;">Синтаксис</th>
+        <th style="width: 25%;">Безопасность</th>
+    </tr>
+    <tr>
+        <td><b>Upcasting</b><br><small>Вверх по иерархии</small></td>
+        <td><code>Cottage</code> → <code>House</code></td>
+        <td><code>House h = cottage;</code><br><small>(автоматически)</small></td>
+        <td>✅ Всегда безопасно</td>
+    </tr>
+    <tr>
+        <td><b>Downcasting</b><br><small>Вниз по иерархии</small></td>
+        <td><code>House</code> → <code>Cottage</code></td>
+        <td><code>Cottage c = (Cottage) h;</code><br><small>(явно)</small></td>
+        <td>⚠️ Требует <code>instanceof</code></td>
+    </tr>
+</table>
+
+<div class="warning">
+    <h3>⚠️ Опасность без instanceof</h3>
+    <div class="code-block">
+<pre><span class="type">House</span> h = <span class="keyword">new</span> <span class="type">House</span>(...);  <span class="comment">// Внутри НЕ Cottage!</span>
+<span class="type">Cottage</span> c = (<span class="type">Cottage</span>) h;  <span class="comment">// 💥 ClassCastException при запуске!</span></pre>
+    </div>
+    <p>Компилятор пропустит, но программа «упадёт» во время выполнения. Всегда проверяй через <code>instanceof</code>!</p>
+</div>
+
+<h2>6. Визуализация процесса</h2>
+
+<div class="comparison">
+    <div class="side before">
+        <div class="header">❌ ДО ПРИВЕДЕНИЯ</div>
+        <table style="margin: 0;">
+            <tr>
+                <td><b>Переменная</b></td>
+                <td><code>cottage</code></td>
+            </tr>
+            <tr>
+                <td><b>Тип</b></td>
+                <td><code>House</code></td>
+            </tr>
+            <tr>
+                <td><b>Доступные методы</b></td>
+                <td><code>showInfo()</code>, <code>getType()</code></td>
+            </tr>
+            <tr>
+                <td><code>plantTree()</code></td>
+                <td style="color: #e74c3c;">❌ Недоступен</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="side after">
+        <div class="header">✅ ПОСЛЕ ПРИВЕДЕНИЯ</div>
+        <table style="margin: 0;">
+            <tr>
+                <td><b>Переменная</b></td>
+                <td><code>c</code></td>
+            </tr>
+            <tr>
+                <td><b>Тип</b></td>
+                <td><code>Cottage</code></td>
+            </tr>
+            <tr>
+                <td><b>Доступные методы</b></td>
+                <td><code>showInfo()</code>, <code>getType()</code>, <code>plantTree()</code></td>
+            </tr>
+            <tr>
+                <td><code>plantTree()</code></td>
+                <td style="color: #27ae60;">✅ Доступен</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<h2>7. Практическая шпаргалка</h2>
+
+<div class="success">
+    <h3>✅ Алгоритм безопасного вызова метода наследника</h3>
+    <ol class="step-list">
+        <li>Есть ссылка типа родителя: <code>House h = ...</code></li>
+        <li>Хочешь вызвать метод ребёнка: <code>plantTree()</code></li>
+        <li>Проверь тип: <code>if (h instanceof Cottage)</code></li>
+        <li>Приведи тип: <code>Cottage c = (Cottage) h;</code></li>
+        <li>Вызови метод: <code>c.plantTree();</code></li>
+    </ol>
+</div>
+
+<div class="code-block">
+<pre><span class="comment">// Пример из твоего кода — теперь с пониманием:</span>
+<span class="keyword">if</span> (cottage <span class="keyword">instanceof</span> <span class="type">Cottage</span>) {          <span class="comment">// 1. Проверка</span>
+    <span class="type">Cottage</span> c = (<span class="type">Cottage</span>) cottage;          <span class="comment">// 2. Приведение</span>
+    c.<span class="method">plantTree</span>();                          <span class="comment">// 3. Вызов ✅</span>
+}
+
+<span class="comment">// Или коротко (вариант со скобками):</span>
+<span class="keyword">if</span> (skyscraper <span class="keyword">instanceof</span> <span class="type">Skyscraper</span>) {
+    ((<span class="type">Skyscraper</span>) skyscraper).<span class="method">goToFloor</span>(5);  <span class="comment">// Привели и сразу вызвали</span>
+}</pre>
+</div>
+
+<h2>8. Частые ошибки</h2>
+
+<table>
+    <tr>
+        <th style="width: 30%;">❌ Ошибка</th>
+        <th style="width: 35%;">💡 Почему не работает</th>
+        <th style="width: 35%;">✅ Как исправить</th>
+    </tr>
+    <tr>
+        <td><code>cottage.plantTree();</code></td>
+        <td>Компилятор видит тип <code>House</code>, у которого нет этого метода</td>
+        <td>Привести тип: <code>((Cottage)cottage).plantTree()</code></td>
+    </tr>
+    <tr>
+        <td><code>(Cottage cottage).plantTree();</code></td>
+        <td>Неверный синтаксис: нельзя объявлять тип внутри скобок приведения</td>
+        <td>Только выражение: <code>(Cottage) cottage</code></td>
+    </tr>
+    <tr>
+        <td>Пропустить <code>instanceof</code></td>
+        <td>Если объект не того типа — программа «упадёт» с <code>ClassCastException</code></td>
+        <td>Всегда проверять: <code>if (obj instanceof Type)</code></td>
+    </tr>
+</table>
+
+<h2>9. Проверь себя 🧠</h2>
+
+<div class="box">
+    <p>Попробуй ответить мысленно:</p>
+    <ol>
+        <li>Что будет, если убрать <code>instanceof</code> и объект на самом деле не <code>Cottage</code>?</li>
+        <li>Можно ли привести <code>House</code> к <code>Cottage</code>, если объект был создан как <code>new House(...)</code>?</li>
+        <li>Почему <code>House h = new Cottage(...)</code> работает без приведения, а обратно — нет?</li>
+    </ol>
+
+    <details style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+        <summary style="cursor: pointer; color: #3498db; font-weight: bold;">👉 Показать ответы</summary>
+        <ol style="margin-top: 10px;">
+            <li><b>ClassCastException</b> при запуске (ошибка времени выполнения)</li>
+            <li><b>Нет</b>, будет ошибка времени выполнения — внутри не Cottage</li>
+            <li>Потому что «вверх» по иерархии — автоматическое расширение, а «вниз» — сужение, которое нужно подтверждать явно</li>
+        </ol>
+    </details>
+</div>
+
+<footer>
+    👨‍💻 Автор: NT4H <br>
+    Universal AI Mentor Engine v1.0 <br>
+    <i>Сохраните этот файл в папке проекта для справки по приведению типов.</i>
+</footer>
+</body>
+</html>
