@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Deep Dive: Principles of Inheritance & Polymorphism</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #e67e22;
+            padding-bottom: 15px;
+            font-size: 28px;
+        }
+        h2 {
+            color: #d35400;
+            margin-top: 40px;
+            border-left: 5px solid #e67e22;
+            padding-left: 15px;
+            font-size: 22px;
+        }
+        h3 {
+            color: #e67e22;
+            margin-top: 25px;
+            font-size: 18px;
+        }
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid #444;
+            margin: 20px 0;
+        }
+        pre {
+            white-space: pre;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .keyword { color: #c678dd; font-weight: bold; }
+        .type { color: #e5c07b; }
+        .method { color: #61afef; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .box {
+            background: #fff;
+            border: 2px solid #e67e22;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        .principle {
+            background: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .insight {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #e67e22;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .diagram {
+            text-align: center;
+            background: #fff;
+            padding: 25px;
+            border: 2px dashed #e67e22;
+            border-radius: 10px;
+            margin: 25px 0;
+            font-family: monospace;
+            font-size: 15px;
+            line-height: 2;
+        }
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+        .step-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 45px;
+            margin: 15px 0;
+        }
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #e67e22;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .question {
+            background: #f0f8ff;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .question .q {
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+        .question .a {
+            color: #27ae60;
+            padding-left: 15px;
+            border-left: 3px solid #27ae60;
+        }
+        footer {
+            margin-top: 60px;
+            border-top: 2px solid #ccc;
+            padding-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+        }
+        .highlight {
+            background: #fff9c4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🚗 Deep Dive: Principles of Inheritance & Polymorphism</h1>
+<p>Концептуальное понимание перед практикой <b>inheritance_vehicles</b></p>
+
+<div class="box">
+    <h3>🎯 Цель этого документа</h3>
+    <p>Здесь <b>нет готового кода</b> для копирования. Здесь объясняется:</p>
+    <ul>
+        <li>✅ <b>ПОЧЕМУ</b> мы используем наследование (проблема, которую оно решает)</li>
+        <li>✅ <b>КАК</b> работает память при наследовании</li>
+        <li>✅ <b>ЗАЧЕМ</b> нужен instanceof перед casting</li>
+        <li>✅ <b>ЧТО</b> происходит внутри JVM при полиморфизме</li>
+        <li>✅ <b>НЮАНСЫ</b> и подводные камни, о которых молчат учебники</li>
+    </ul>
+    <p><i>Прочитай это полностью перед тем, как писать код!</i></p>
+</div>
+
+<h2>📌 Принцип 1: Зачем нужно наследование? (Проблема дублирования)</h2>
+
+<div class="principle">
+    <h4>🔍 Основная проблема</h4>
+    <p>Представь: ты пишешь программу для автосалона. Тебе нужны классы для <b>Машины</b>, <b>Велосипеда</b> и <b>Грузовика</b>.</p>
+
+    <p><b>БЕЗ наследования</b> ты пишешь так:</p>
+</div>
+
+<div class="code-block">
+<pre><span class="comment">// ❌ ПЛОХО: дублирование кода</span>
+<span class="keyword">class</span> <span class="type">Car</span> {
+    String brand;      <span class="comment">// Одинаково во всех классах!</span>
+    <span class="type">int</span> maxSpeed;
+    <span class="type">double</span> weight;
+    <span class="type">int</span> doors;
+}
+
+<span class="keyword">class</span> <span class="type">Bike</span> {
+    String brand;      <span class="comment">// Снова те же поля!</span>
+    <span class="type">int</span> maxSpeed;
+    <span class="type">double</span> weight;
+    <span class="type">boolean</span> hasBasket;
+}
+
+<span class="keyword">class</span> <span class="type">Truck</span> {
+    String brand;      <span class="comment">// И снова!</span>
+    <span class="type">int</span> maxSpeed;
+    <span class="type">double</span> weight;
+    <span class="type">int</span> cargoCapacity;
+}</pre>
+</div>
+
+<div class="warning">
+    <h4>⚠️ Проблемы такого подхода:</h4>
+    <ol class="step-list">
+        <li><b>DRY нарушен</b> — одно и то же написано 3 раза</li>
+        <li><b>Сложно поддерживать</b> — изменил поле? Правь в 3 местах!</li>
+        <li><b>Нет общей логики</b> — нельзя сделать массив «всех транспортных средств»</li>
+    </ol>
+</div>
+
+<div class="insight">
+    <h4>✅ Решение: вынести общее в базовый класс</h4>
+    <p>Всё, что <b>одинаково</b> у всех транспортных средств → в класс <code>Vehicle</code>.</p>
+    <p>Всё, что <b>уникально</b> для каждого → в классы-наследники.</p>
+</div>
+
+<div class="diagram">
+    <pre>
+    ┌─────────────────────────────────────────┐
+    │           🚗 Vehicle (Родитель)         │
+    │  • brand (общее для всех)               │
+    │  • maxSpeed (общее для всех)            │
+    │  • weight (общее для всех)              │
+    │  • move() (все едут, но по-разному)     │
+    └─────────────────────────────────────────┘
+         ↑           ↑           ↑
+         │           │           │
+    ┌────┘           │           └────┐
+    │                │                │
+    🚗 Car           🚲 Bike          🚚 Truck
+    • doors          • hasBasket       • cargoCapacity
+    • hasAC          • wheelSize       • axles
+    </pre>
+</div>
+
+<h2>📌 Принцип 2: Как работает super() внутри памяти?</h2>
+
+<div class="principle">
+    <h4>🔍 Что происходит при создании объекта?</h4>
+    <p>Когда ты пишешь <code>new Car(...)</code>, в памяти создаётся <b>один объект</b>, но он содержит:</p>
+</div>
+
+<div class="diagram">
+    <pre>
+    Память при: Car car = new Car("Toyota", 200, 1500, 4, true);
+
+    ┌───────────────────────────────────────────┐
+    │           Объект в памяти (Car)           │
+    ├───────────────────────────────────────────┤
+    │  Часть от Vehicle (родитель):             │
+    │  ├─ brand: "Toyota"                       │
+    │  ├─ maxSpeed: 200                         │
+    │  └─ weight: 1500                          │
+    ├───────────────────────────────────────────┤
+    │  Часть от Car (наследник):                │
+    │  ├─ doors: 4                              │
+    │  └─ hasAC: true                           │
+    └───────────────────────────────────────────┘
+
+    👉 super(...) инициализирует ВЕРХНЮЮ часть!
+    👉 this. инициализирует НИЖНЮЮ часть!
+    </pre>
+</div>
+
+<div class="warning">
+    <h4>⚠️ Почему super() должен быть ПЕРВОЙ строкой?</h4>
+    <p>Потому что <b>нельзя использовать объект, пока он не инициализирован полностью</b>.</p>
+    <p>Сначала фундамент (родитель), потом стены (наследник). Иначе — ошибка компиляции!</p>
+</div>
+
+<div class="code-block">
+<pre><span class="keyword">public class</span> <span class="type">Car</span> <span class="keyword">extends</span> <span class="type">Vehicle</span> {
+    <span class="keyword">public</span> <span class="type">Car</span>(String brand, <span class="type">int</span> maxSpeed, <span class="type">double</span> weight,
+               <span class="type">int</span> doors, <span class="type">boolean</span> hasAC) {
+
+        <span class="comment">// 👇 ПЕРВАЯ СТРОКА: инициализируем часть от Vehicle</span>
+        <span class="keyword">super</span>(brand, maxSpeed, weight);
+
+        <span class="comment">// 👇 ВТОРАЯ+: инициализируем часть от Car</span>
+        <span class="keyword">this</span>.doors = doors;
+        <span class="keyword">this</span>.hasAC = hasAC;
+    }
+}</pre>
+</div>
+
+<h2>📌 Принцип 3: Полиморфизм — как JVM выбирает метод?</h2>
+
+<div class="principle">
+    <h4>🔍 Главный вопрос</h4>
+    <p>У тебя есть:</p>
+    <div class="code-block">
+<pre><span class="type">Vehicle</span> v = <span class="keyword">new</span> <span class="type">Car</span>(...);
+v.move();  <span class="comment">// ❓ Какой метод вызовется: Vehicle или Car?</span></pre>
+    </div>
+    <p>Ответ: <b>метод Car</b>. Но почему?</p>
+</div>
+
+<div class="insight">
+    <h4>✅ Динамическое связывание (Dynamic Binding)</h4>
+    <ol class="step-list">
+        <li><b>Компилятор</b> (когда пишешь код) проверяет тип ссылки: <code>Vehicle</code>. Он говорит: «У Vehicle есть метод move() — ОК, код валиден».</li>
+        <li><b>JVM</b> (когда программа работает) смотрит на <b>реальный объект</b> в памяти: <code>Car</code>. Она говорит: «Это Car! Вызову версию move() из Car».</li>
+    </ol>
+</div>
+
+<div class="diagram">
+    <pre>
+    ВРЕМЯ КОМПИЛЯЦИИ              ВРЕМЯ ВЫПОЛНЕНИЯ
+    (Компилятор)                  (JVM)
+    ↓                             ↓
+    ┌─────────────────┐           ┌─────────────────┐
+    │ Тип ссылки:     │           │ Реальный объект:│
+    │ Vehicle         │           │ Car             │
+    │                 │           │                 │
+    │ Видит: move()   │           │ Вызывает:       │
+    │ ✅ Есть метод   │           │ Car.move()      │
+    └─────────────────┘           └─────────────────┘
+    </pre>
+</div>
+
+<div class="warning">
+    <h4>⚠️ Важный нюанс!</h4>
+    <p>Полиморфизм работает <b>только для переопределённых методов</b>.</p>
+    <p>Если у <code>Car</code> есть метод <code>openTrunk()</code>, которого нет у <code>Vehicle</code> — через ссылку <code>Vehicle</code> его <b>не вызвать</b> без casting!</p>
+</div>
+
+<h2>📌 Принцип 4: Зачем нужен instanceof перед casting?</h2>
+
+<div class="principle">
+    <h4>🔍 Проблема</h4>
+    <p>У тебя есть массив <code>Vehicle[]</code>. Ты хочешь вызвать <code>openTrunk()</code>, но он есть только у <code>Car</code>.</p>
+</div>
+
+<div class="code-block">
+<pre><span class="type">Vehicle</span>[] garage = {car, bike, truck};
+
+<span class="keyword">for</span> (<span class="type">Vehicle</span> v : garage) {
+    <span class="comment">// ❌ БЕЗ instanceof — опасно!</span>
+    <span class="type">Car</span> c = (<span class="type">Car</span>) v;  <span class="comment">// А если v — это Bike?!</span>
+    c.openTrunk();     <span class="comment">// 💥 ClassCastException!</span>
+}</pre>
+</div>
+
+<div class="warning">
+    <h4>⚠️ Что происходит без instanceof?</h4>
+    <ol class="step-list">
+        <li>Компилятор пропускает код (он видит приведение типа).</li>
+        <li>Программа запускается.</li>
+        <li>Когда цикл доходит до <code>Bike</code>, JVM пытается привести <code>Bike</code> к <code>Car</code>.</li>
+        <li>💥 <b>ClassCastException</b> — программа «падает»!</li>
+    </ol>
+</div>
+
+<div class="insight">
+    <h4>✅ Безопасный подход</h4>
+    <div class="code-block">
+<pre><span class="keyword">for</span> (<span class="type">Vehicle</span> v : garage) {
+    <span class="comment">// 👇 Сначала проверяем тип</span>
+    <span class="keyword">if</span> (v <span class="keyword">instanceof</span> <span class="type">Car</span>) {
+        <span class="comment">// 👇 Только потом приводим</span>
+        <span class="type">Car</span> c = (<span class="type">Car</span>) v;
+        c.openTrunk();  <span class="comment">// ✅ Безопасно!</span>
+    }
+}</pre>
+    </div>
+</div>
+
+<div class="diagram">
+    <pre>
+    instanceof — это «вопрос» к JVM:
+
+    ┌──────────────────────────────────────┐
+    │  v instanceof Car?                   │
+    │                                      │
+    │  Если v = Car    → true  ✅          │
+    │  Если v = Bike   → false ❌          │
+    │  Если v = Truck  → false ❌          │
+    └──────────────────────────────────────┘
+
+    👉 Только если true — делаем casting!
+    </pre>
+</div>
+
+<h2>📌 Принцип 5: Логические методы (boolean) — зачем они?</h2>
+
+<div class="principle">
+    <h4>🔍 Концепция</h4>
+    <p>Методы, которые возвращают <code>boolean</code>, не делают действий. Они <b>отвечают на вопрос</b>.</p>
+</div>
+
+<table>
+    <tr>
+        <th>Метод</th>
+        <th>Вопрос</th>
+        <th>Логика</th>
+    </tr>
+    <tr>
+        <td><code>canCarryCargo()</code></td>
+        <td>«Может ли везти груз?»</td>
+        <td>Car: doors >= 4<br>Truck: cargoCapacity > 0</td>
+    </tr>
+    <tr>
+        <td><code>hasBasket()</code></td>
+        <td>«Есть ли корзина?»</td>
+        <td>Bike: возвращает поле hasBasket</td>
+    </tr>
+</table>
+
+<div class="insight">
+    <h4>✅ Зачем это нужно в тесте?</h4>
+    <p>Ты можешь писать <b>условную логику</b> на основе возможностей объекта:</p>
+    <div class="code-block">
+<pre><span class="keyword">for</span> (<span class="type">Vehicle</span> v : garage) {
+    <span class="keyword">if</span> (v <span class="keyword">instanceof</span> <span class="type">Car</span>) {
+        <span class="type">Car</span> c = (<span class="type">Car</span>) v;
+        <span class="keyword">if</span> (c.canCarryCargo()) {
+            System.out.println(<span class="string">"This car can carry cargo!"</span>);
+        }
+    }
+}</pre>
+    </div>
+</div>
+
+<h2>📌 Принцип 6: Валидация в сеттерах (без throw)</h2>
+
+<div class="principle">
+    <h4>🔍 Проблема</h4>
+    <p>Пользователь может передать некорректные данные:</p>
+    <div class="code-block">
+<pre>car.setMaxSpeed(-100);      <span class="comment">// ❌ Отрицательная скорость?</span>
+car.setMaxSpeed(1000);      <span class="comment">// ❌ Нереалистично!</span>
+car.setBrand(null);         <span class="comment">// ❌ Пустая марка?</span></pre>
+    </div>
+</div>
+
+<div class="warning">
+    <h4>⚠️ Порядок проверки на null</h4>
+    <p><b>НЕПРАВИЛЬНО:</b></p>
+    <div class="code-block">
+<pre><span class="keyword">if</span> (brand.trim().isEmpty() || brand == <span class="keyword">null</span>) {
+    <span class="comment">// 💥 Если brand = null, brand.trim() выбросит NullPointerException!
+</span>}</pre>
+    </div>
+
+    <p><b>ПРАВИЛЬНО:</b></p>
+    <div class="code-block">
+<pre><span class="keyword">if</span> (brand == <span class="keyword">null</span> || brand.trim().isEmpty()) {
+    <span class="comment">// ✅ Сначала null, потом методы!
+</span>}</pre>
+    </div>
+</div>
+
+<div class="insight">
+    <h4>✅ Стратегия валидации (без throw)</h4>
+    <ol class="step-list">
+        <li>Проверь условие (например, скорость от 0 до 300).</li>
+        <li>Если ОК — установи значение.</li>
+        <li>Если НЕ ОК — установи <b>значение по умолчанию</b> (например, 100).</li>
+        <li>Опционально: выведи предупреждение в консоль.</li>
+    </ol>
+</div>
+
+<h2>📌 Принцип 7: Проектирование иерархии — как принимать решения?</h2>
+
+<div class="principle">
+    <h4>🔍 Вопрос на засыпку</h4>
+    <p>Как решить, какие поля вынести в базовый класс, а какие оставить в наследниках?</p>
+</div>
+
+<div class="insight">
+    <h4>✅ Тест «ВСЕ или НЕ ВСЕ»</h4>
+    <p>Задай вопрос: <b>«Это есть у ВСЕХ транспортных средств?»</b></p>
+
+    <table>
+        <tr>
+            <th>Поле</th>
+            <th>Есть у всех?</th>
+            <th>Куда?</th>
+        </tr>
+        <tr>
+            <td><code>brand</code></td>
+            <td>✅ Да (Car, Bike, Truck)</td>
+            <td>Vehicle</td>
+        </tr>
+        <tr>
+            <td><code>maxSpeed</code></td>
+            <td>✅ Да</td>
+            <td>Vehicle</td>
+        </tr>
+        <tr>
+            <td><code>doors</code></td>
+            <td>❌ Нет (только у Car)</td>
+            <td>Car</td>
+        </tr>
+        <tr>
+            <td><code>hasBasket</code></td>
+            <td>❌ Нет (только у Bike)</td>
+            <td>Bike</td>
+        </tr>
+        <tr>
+            <td><code>cargoCapacity</code></td>
+            <td>❌ Нет (только у Truck)</td>
+            <td>Truck</td>
+        </tr>
+    </table>
+</div>
+
+<h2>📌 Принцип 8: Частые ошибки и как их избежать</h2>
+
+<table>
+    <tr>
+        <th>❌ Ошибка</th>
+        <th>💡 Почему неправильно</th>
+        <th>✅ Как правильно</th>
+    </tr>
+    <tr>
+        <td><code>super()</code> не первой строкой</td>
+        <td>Объект не инициализирован полностью</td>
+        <td>Всегда первая строка конструктора</td>
+    </tr>
+    <tr>
+        <td>Забыть <code>@Override</code></td>
+        <td>Компилятор не проверит сигнатуру метода</td>
+        <td>Всегда добавляй аннотацию</td>
+    </tr>
+    <tr>
+        <td>Casting без <code>instanceof</code></td>
+        <td>ClassCastException при выполнении</td>
+        <td>Сначала проверка, потом приведение</td>
+    </tr>
+    <tr>
+        <td><code>brand.trim()</code> до проверки на null</td>
+        <td>NullPointerException</td>
+        <td>Сначала <code>brand == null</code></td>
+    </tr>
+    <tr>
+        <td>Поля <code>private</code> в базовом классе</td>
+        <td>Наследники не видят их</td>
+        <td>Используй <code>protected</code></td>
+    </tr>
+    <tr>
+        <td>Сеттер назван <code>isTrained()</code></td>
+        <td>Конфликт с геттером для boolean</td>
+        <td>Геттер: <code>isTrained()</code>, Сеттер: <code>setTrained()</code></td>
+    </tr>
+</table>
+
+<h2>📌 Принцип 9: Как думать при написании кода?</h2>
+
+<div class="question">
+    <div class="q">❓ Вопрос 1: С чего начать?</div>
+    <div class="a">
+        <p>Начни с <b>базового класса</b> (Vehicle). Определи:</p>
+        <ol>
+            <li>Какие поля общие для ВСЕХ?</li>
+            <li>Какие методы будут у ВСЕХ?</li>
+            <li>Какие методы будут переопределяться?</li>
+        </ol>
+    </div>
+</div>
+
+<div class="question">
+    <div class="q">❓ Вопрос 2: Как проверить, что наследование правильное?</div>
+    <div class="a">
+        <p>Примени <b>тест «является»</b>:</p>
+        <ul>
+            <li>✅ Car <b>является</b> Vehicle? Да → наследование ОК</li>
+            <li>✅ Bike <b>является</b> Vehicle? Да → наследование ОК</li>
+            <li>❌ Car <b>является</b> Bike? Нет → не должно быть наследования</li>
+        </ul>
+    </div>
+</div>
+
+<div class="question">
+    <div class="q">❓ Вопрос 3: Когда использовать полиморфизм?</div>
+    <div class="a">
+        <p>Когда хочешь <b>обрабатывать разные типы одинаково</b>:</p>
+        <div class="code-block">
+<pre><span class="comment">// Хочешь вызвать showInfo() у всех транспортных средств?</span>
+<span class="type">Vehicle</span>[] garage = {car, bike, truck};
+<span class="keyword">for</span> (<span class="type">Vehicle</span> v : garage) {
+    v.showInfo();  <span class="comment">// Каждый покажет свою версию!</span>
+}</pre>
+        </div>
+    </div>
+</div>
+
+<div class="question">
+    <div class="q">❓ Вопрос 4: Когда использовать casting?</div>
+    <div class="a">
+        <p>Только когда нужно вызвать <b>уникальный метод наследника</b>:</p>
+        <div class="code-block">
+<pre><span class="comment">// openTrunk() есть только у Car</span>
+<span class="keyword">if</span> (v <span class="keyword">instanceof</span> <span class="type">Car</span>) {
+    <span class="type">Car</span> c = (<span class="type">Car</span>) v;  <span class="comment">// Casting</span>
+    c.openTrunk();     <span class="comment">// Уникальный метод</span>
+}</pre>
+        </div>
+    </div>
+</div>
+
+<h2>📌 Итоговая шпаргалка перед практикой</h2>
+
+<div class="box">
+    <h3>✅ Чеклист понимания</h3>
+    <p>Перед тем как писать код, убедись, что ты понимаешь:</p>
+    <ol class="step-list">
+        <li><b>Зачем</b> нужно наследование (DRY, иерархия, полиморфизм)</li>
+        <li><b>Почему</b> super() должен быть первой строкой (инициализация памяти)</li>
+        <li><b>Как</b> JVM выбирает метод при полиморфизме (динамическое связывание)</li>
+        <li><b>Зачем</b> нужен instanceof (безопасность перед casting)</li>
+        <li><b>Как</b> правильно валидировать данные (сначала null, потом методы)</li>
+        <li><b>Какие</b> поля выносить в базовый класс (тест «ВСЕ или НЕ ВСЕ»)</li>
+    </ol>
+</div>
+
+<div class="insight">
+    <h3>💡 Главный совет</h3>
+    <p>Не пиши весь код сразу! Делай по шагам:</p>
+    <ol>
+        <li>Vehicle → проверь, что компилируется</li>
+        <li>Car → проверь, что наследование работает</li>
+        <li>Bike → проверь, что полиморфизм работает</li>
+        <li>Truck → проверь, что casting работает</li>
+        <li>VehicleTest → финальная сборка</li>
+    </ol>
+    <p><b>Каждый шаг тестируй отдельно!</b></p>
+</div>
+
+<footer>
+    👨‍💻 Автор: NT4H <br>
+    Universal AI Mentor Engine v1.0 <br>
+    <i>Этот документ объясняет ПРИНЦИПЫ. Код задачи ты пишешь сам!</i>
+</footer>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Deep Dive: Inheritance & Polymorphism (Vehicles)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #e67e22;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #d35400;
+            margin-top: 30px;
+            border-left: 4px solid #e67e22;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #e67e22;
+            margin-top: 25px;
+        }
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #444;
+            margin: 15px 0;
+        }
+        pre {
+            white-space: pre;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .keyword { color: #c678dd; font-weight: bold; }
+        .type { color: #e5c07b; }
+        .method { color: #61afef; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .box {
+            background: #fff;
+            border: 2px solid #e67e22;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tip {
+            background: #fef5e7;
+            border-left: 4px solid #e67e22;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #e67e22;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .hierarchy {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border: 2px dashed #e67e22;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 16px;
+        }
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+        .step-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 40px;
+            margin: 10px 0;
+        }
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #e67e22;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        footer {
+            margin-top: 60px;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🚗 Deep Dive: Inheritance & Polymorphism (Vehicles)</h1>
+<p>Углублённая практика для задачи <b>inheritance_vehicles</b></p>
+
+<div class="box">
+    <h3>🎯 Отличие от предыдущих задач</h3>
+    <ul>
+        <li>✅ <b>3 наследника</b> (Car, Bike, Truck) вместо двух</li>
+        <li>✅ <b>Логические методы</b> (canCarryCargo, hasBasket) — возвращают boolean</li>
+        <li>✅ <b>Сравнение объектов</b> в тесте (кто быстрее?)</li>
+        <li>✅ <b>Валидация в сеттерах</b> (без throw, с установкой значения по умолчанию)</li>
+    </ul>
+</div>
+
+<h2>1. Иерархия классов</h2>
+
+<div class="hierarchy">
+    <pre>
+    🚗 Vehicle (Базовый класс)
+    /     |     \
+    /      |      \
+    🚗 Car   🚲 Bike   🚚 Truck
+    </pre>
+</div>
+
+<h2>2. Базовый класс Vehicle</h2>
+
+<p>Содержит <b>общие поля</b> для всех транспортных средств:</p>
+
+<div class="code-block">
+<pre><span class="keyword">public class</span> <span class="type">Vehicle</span> {
+    <span class="keyword">protected</span> String brand;      <span class="comment">// Марка</span>
+    <span class="keyword">protected</span> <span class="type">int</span> maxSpeed;        <span class="comment">// Макс. скорость (км/ч)</span>
+    <span class="keyword">protected</span> <span class="type">double</span> weight;       <span class="comment">// Вес (кг)</span>
+
+    <span class="comment">// Конструктор, геттеры, сеттеры</span>
+    <span class="comment">// Методы: getType(), move(), showInfo()</span>
+}</pre>
+</div>
+
+<h2>3. Особенности наследников</h2>
+
+<table>
+    <tr>
+        <th>Класс</th>
+        <th>Уникальные поля</th>
+        <th>Уникальные методы</th>
+    </tr>
+    <tr>
+        <td><b>Car</b></td>
+        <td>doors, hasAC</td>
+        <td>openTrunk(), canCarryCargo()</td>
+    </tr>
+    <tr>
+        <td><b>Bike</b></td>
+        <td>hasBasket, wheelSize</td>
+        <td>ringBell()</td>
+    </tr>
+    <tr>
+        <td><b>Truck</b></td>
+        <td>cargoCapacity, axles</td>
+        <td>loadCargo(), canCarryCargo()</td>
+    </tr>
+</table>
+
+<h2>4. Логические методы (boolean)</h2>
+
+<p>Метод <code>canCarryCargo()</code> есть у <b>Car</b> и <b>Truck</b>, но работает по-разному:</p>
+
+<div class="code-block">
+<pre><span class="comment">// В классе Car:</span>
+<span class="keyword">public boolean</span> <span class="method">canCarryCargo</span>() {
+    <span class="keyword">return</span> doors >= 4;  <span class="comment">// 4+ двери = можно везти груз</span>
+}
+
+<span class="comment">// В классе Truck:</span>
+<span class="keyword">public boolean</span> <span class="method">canCarryCargo</span>() {
+    <span class="keyword">return</span> cargoCapacity > 0;  <span class="comment">// Есть грузоподъёмность = можно везти</span>
+}</pre>
+</div>
+
+<h2>5. Полиморфизм с 3 типами</h2>
+
+<div class="code-block">
+<pre><span class="type">Vehicle</span>[] garage = <span class="keyword">new</span> <span class="type">Vehicle</span>[3];
+garage[0] = <span class="keyword">new</span> <span class="type">Car</span>(...);
+garage[1] = <span class="keyword">new</span> <span class="type">Bike</span>(...);
+garage[2] = <span class="keyword">new</span> <span class="type">Truck</span>(...);
+
+<span class="keyword">for</span> (<span class="type">Vehicle</span> v : garage) {
+    v.showInfo();    <span class="comment">// Каждый покажет свою версию!</span>
+    v.move();        <span class="comment">// Каждый поедет по-своему!</span>
+}</pre>
+</div>
+
+<h2>6. Приведение типа для 3 наследников</h2>
+
+<div class="code-block">
+<pre><span class="keyword">for</span> (<span class="type">Vehicle</span> v : garage) {
+    <span class="keyword">if</span> (v <span class="keyword">instanceof</span> <span class="type">Car</span>) {
+        <span class="type">Car</span> c = (<span class="type">Car</span>) v;
+        c.openTrunk();
+    }
+    <span class="keyword">if</span> (v <span class="keyword">instanceof</span> <span class="type">Bike</span>) {
+        <span class="type">Bike</span> b = (<span class="type">Bike</span>) v;
+        b.ringBell();
+    }
+    <span class="keyword">if</span> (v <span class="keyword">instanceof</span> <span class="type">Truck</span>) {
+        <span class="type">Truck</span> t = (<span class="type">Truck</span>) v;
+        t.loadCargo();
+    }
+}</pre>
+</div>
+
+<h2>7. Валидация в сеттерах (без throw)</h2>
+
+<div class="warning">
+    ⚠️ <b>Помни:</b> Мы не используем <code>throw</code> в этом модуле. Вместо этого устанавливаем значение по умолчанию.
+</div>
+
+<div class="code-block">
+<pre><span class="keyword">public void</span> <span class="method">setMaxSpeed</span>(<span class="type">int</span> maxSpeed) {
+    <span class="keyword">if</span> (maxSpeed > 0 && maxSpeed <= 300) {
+        <span class="keyword">this</span>.maxSpeed = maxSpeed;
+    } <span class="keyword">else</span> {
+        <span class="keyword">this</span>.maxSpeed = 100;  <span class="comment">// Значение по умолчанию</span>
+    }
+}</pre>
+</div>
+
+<h2>8. Чеклист перед началом</h2>
+
+<div class="box">
+    <ul class="step-list">
+        <li>Придумай поля для Vehicle (общие для всех)</li>
+        <li>Придумай уникальные поля для Car, Bike, Truck</li>
+        <li>В конструкторах: <code>super(...)</code> первой строкой</li>
+        <li>Переопредели методы с <code>@Override</code></li>
+        <li>В тесте: массив <code>Vehicle[]</code> + цикл для полиморфизма</li>
+        <li>Для уникальных методов: <code>instanceof</code> + casting</li>
+        <li>Код на английском 🇬🇧 / Комментарии на русском 🇷🇺</li>
+    </ul>
+</div>
+
+<footer>
+    👨‍💻 Автор: NT4H <br>
+    Universal AI Mentor Engine v1.0 <br>
+    <i>Этот документ объясняет концепции. Код задачи ты пишешь сам!</i>
+</footer>
+</body>
+</html>
