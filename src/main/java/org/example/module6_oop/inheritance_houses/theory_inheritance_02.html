@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Module 6 Part 4: Inheritance & Polymorphism (Houses)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; color: #333; }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 40px; }
+        h3 { color: #16a085; }
+        .code-block { background: #282c34; color: #abb2bf; padding: 15px; border-radius: 6px; overflow-x: auto; border: 1px solid #ddd; }
+        pre { white-space: pre; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 14px; line-height: 1.5; }
+        .keyword { color: #c678dd; font-weight: bold; }
+        .type { color: #e5c07b; }
+        .method { color: #61afef; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .hierarchy { background: #fff; border: 2px dashed #3498db; padding: 15px; font-family: monospace; white-space: pre; overflow-x: auto; text-align: center; font-weight: bold; color: #2c3e50; }
+        footer { margin-top: 60px; border-top: 1px solid #ccc; padding-top: 15px; font-size: 0.9em; color: #777; text-align: center; }
+        .note { background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .tip { background: #d4edda; border-left: 5px solid #28a745; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #fff; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background: #3498db; color: #fff; }
+        tr:nth-child(even) { background: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+<h1>🏠 Module 6 Part 4: Inheritance & Polymorphism</h1>
+<p>Версия для задачи <b>inheritance_houses</b>. Вся теория на примере строительства домов.</p>
+
+<h2>1. Зачем нужно наследование? (DRY)</h2>
+<p>Представь, что ты пишешь программу для застройщика. У тебя есть <b>Обычный Дом</b>, <b>Коттедж</b> и <b>Небоскрёб</b>.</p>
+<p>У всех них есть общее:</p>
+<ul>
+    <li>Адрес (<code>address</code>)</li>
+    <li>Площадь (<code>square</code>)</li>
+    <li>Год постройки (<code>yearBuilt</code>)</li>
+</ul>
+<p>Писать эти поля в каждом классе три раза — плохо. Это нарушает принцип <b>DRY (Don't Repeat Yourself)</b>. Мы вынесем общее в базовый класс <code>House</code>.</p>
+
+<div class="hierarchy">
+    🏢 House (Базовый класс)
+    /           \
+    /             \
+    🏡 Cottage      🏢 Skyscraper
+    (Наследник)      (Наследник)
+</div>
+
+<h2>2. Ключевое слово extends</h2>
+<p>Чтобы сказать Java, что класс наследуется, используем <code>extends</code>.</p>
+
+<div class="code-block">
+<pre><span class="keyword">public class</span> <span class="type">House</span> {
+    <span class="keyword">protected</span> String address;  <span class="comment">// protected: видно в классе и наследникам</span>
+    <span class="keyword">protected</span> <span class="type">int</span> square;
+
+    <span class="keyword">public</span> <span class="type">House</span>(String address, <span class="type">int</span> square) {
+        <span class="keyword">this</span>.address = address;
+        <span class="keyword">this</span>.square = square;
+    }
+}
+
+<span class="keyword">public class</span> <span class="type">Cottage</span> <span class="keyword">extends</span> <span class="type">House</span> {  <span class="comment">// 👈 Наследование</span>
+    <span class="keyword">private</span> <span class="type">int</span> gardenSize;
+
+    <span class="keyword">public</span> <span class="type">Cottage</span>(String address, <span class="type">int</span> square, <span class="type">int</span> gardenSize) {
+        <span class="comment">// Конструктор будет ниже...</span>
+    }
+}</pre>
+</div>
+
+<div class="note">
+    ⚠️ <b>Важно:</b> В Java класс может наследоваться только от <b>одного</b> родителя.
+    <br><code>class Cottage extends House, Building</code> — ❌ Ошибка!
+</div>
+
+<h2>3. Ключевое слово super</h2>
+<p>Класс <code>Cottage</code> должен инициализировать поля родителя (<code>address</code>, <code>square</code>). Для этого используется <code>super</code>.</p>
+
+<div class="code-block">
+<pre><span class="keyword">public</span> <span class="type">Cottage</span>(String address, <span class="type">int</span> square, <span class="type">int</span> gardenSize) {
+    <span class="keyword">super</span>(address, square);  <span class="comment">// 👈 ПЕРВАЯ СТРОКА! Вызов конструктора House</span>
+    <span class="keyword">this</span>.gardenSize = gardenSize; <span class="comment">// 👈 Потом свои поля</span>
+}</pre>
+</div>
+
+<div class="tip">
+    💡 <b>Правило первой строки:</b> Вызов <code>super(...)</code> должен быть самой первой инструкцией в конструкторе наследника.
+    <br>Логика: «Сначала построй фундамент (House), потом возводи стены (Cottage)».
+</div>
+
+<h2>4. Переопределение методов (@Override)</h2>
+<p>У всех домов есть метод <code>showInfo()</code>, но коттедж хочет выводить ещё и размер сада.</p>
+
+<div class="code-block">
+<pre><span class="keyword">// В классе House</span>
+<span class="keyword">public void</span> <span class="method">showInfo</span>() {
+    System.out.println(<span class="string">"House: "</span> + address);
+}
+
+<span class="keyword">// В классе Cottage</span>
+<span class="keyword">@Override</span>  <span class="comment">// 👈 Страховка от опечаток</span>
+<span class="keyword">public void</span> <span class="method">showInfo</span>() {
+    <span class="comment">// Можно вызвать метод родителя, если нужно:</span>
+    <span class="keyword">super</span>.showInfo();
+    System.out.println(<span class="string">"Garden: "</span> + gardenSize);
+}</pre>
+</div>
+
+<h2>5. Полиморфизм</h2>
+<p>Это возможность использовать объект наследника там, где ожидается объект родителя.</p>
+
+<div class="code-block">
+<pre><span class="type">House</span> myHome = <span class="keyword">new</span> <span class="type">Cottage</span>(<span class="string">"Forest 5"</span>, 120, 300);
+<span class="comment">// Ссылка типа House, но объект типа Cottage</span>
+
+myHome.showInfo();
+<span class="comment">// Вызовется метод Cottage (если он переопределён)! </span>
+<span class="comment">// Это называется динамическое связывание.</span></pre>
+</div>
+
+<p><b>Зачем это нужно?</b> Ты можешь создать массив домов и хранить там разные типы:</p>
+<div class="code-block">
+<pre><span class="type">House</span>[] buildings = <span class="keyword">new</span> <span class="type">House</span>[3];
+buildings[0] = <span class="keyword">new</span> <span class="type">House</span>(<span class="string">"Lenina 10"</span>, 50);
+buildings[1] = <span class="keyword">new</span> <span class="type">Cottage</span>(<span class="string">"Forest 5"</span>, 120, 300);
+buildings[2] = <span class="keyword">new</span> <span class="type">Skyscraper</span>(<span class="string">"Center 1"</span>, 5000, 50);
+
+<span class="keyword">for</span> (<span class="type">House</span> h : buildings) {
+    h.showInfo();  <span class="comment">// Каждый объект покажет свою инфо!</span>
+}</pre>
+</div>
+
+<h2>6. Проверка типа (instanceof)</h2>
+<p>Иногда нужно узнать конкретный тип объекта, чтобы вызвать его уникальные методы (например, <code>plantTree()</code> есть только у <code>Cottage</code>).</p>
+
+<div class="code-block">
+<pre><span class="keyword">if</span> (myHome <span class="keyword">instanceof</span> <span class="type">Cottage</span>) {
+    <span class="comment">// Теперь мы уверены, что это Cottage</span>
+    <span class="type">Cottage</span> c = (<span class="type">Cottage</span>) myHome;  <span class="comment">// Приведение типа</span>
+    c.plantTree();  <span class="comment">// Теперь можно вызвать!</span>
+}</pre>
+</div>
+
+<h2>7. Модификаторы доступа</h2>
+<p>Для наследования критически важен <code>protected</code>.</p>
+<table>
+    <tr>
+        <th>Модификатор</th>
+        <th>В классе</th>
+        <th>В пакете</th>
+        <th>В наследнике</th>
+        <th>Везде</th>
+    </tr>
+    <tr>
+        <td><code>private</code></td>
+        <td>✅</td>
+        <td>❌</td>
+        <td>❌</td>
+        <td>❌</td>
+    </tr>
+    <tr>
+        <td><code>protected</code></td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>❌</td>
+    </tr>
+    <tr>
+        <td><code>public</code></td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>✅</td>
+    </tr>
+</table>
+<p>👉 Поля <code>address</code> и <code>square</code> в классе <code>House</code> должны быть <code>protected</code>, чтобы наследники видели их напрямую.</p>
+
+<footer>
+    👨‍💻 Автор: NT4H <br>
+    Universal AI Mentor Engine v1.0 <br>
+    <i>Сохраните этот файл в папке проекта для справки.</i>
+</footer>
+</body>
+</html>

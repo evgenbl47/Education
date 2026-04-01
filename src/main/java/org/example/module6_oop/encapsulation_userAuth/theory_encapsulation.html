@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java OOP: Encapsulation (Инкапсуляция)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 25px; }
+        h3 { color: #16a085; }
+        .analogy {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            white-space: pre;
+        }
+        .code .keyword { color: #f92672; }
+        .code .type { color: #66d9ef; }
+        .code .string { color: #a6e22e; }
+        .code .comment { color: #75715e; }
+        .code .modifier { color: #f92672; font-weight: bold; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th { background: #3498db; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .tip {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+        .author {
+            color: #3498db;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔐 Encapsulation (Инкапсуляция)</h1>
+    <p><strong>Модуль:</strong> Module 6: OOP — Part 3</p>
+    <p><strong>Задача:</strong> encapsulation_userAuth_private</p>
+    <p><strong>Тема:</strong> Защита данных через private поля и public методы</p>
+
+    <h2>🧠 Что такое инкапсуляция?</h2>
+    <p><strong>Инкапсуляция</strong> — это механизм скрытия внутренних данных класса и предоставления контролируемого доступа к ним через методы.</p>
+
+    <div class="analogy">
+        <strong>💡 Аналогия:</strong> Банкомат 🏦<br>
+        • <strong>Без инкапсуляции:</strong> Любой может открыть заднюю панель и забрать деньги<br>
+        • <strong>С инкапсуляцией:</strong> Доступ только через защищённый интерфейс (карта + PIN)<br>
+        <em>Внутри — сложные процессы, снаружи — простой и безопасный интерфейс.</em>
+    </div>
+
+    <h2>🔑 Модификаторы доступа</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Модификатор</th>
+            <th>Видимость</th>
+            <th>Когда использовать</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><code>private</code></td>
+            <td>Только внутри класса</td>
+            <td>Поля и внутренние методы (скрыть данные)</td>
+        </tr>
+        <tr>
+            <td><code>public</code></td>
+            <td>Везде</td>
+            <td>Методы для внешнего доступа (API класса)</td>
+        </tr>
+        <tr>
+            <td><code>protected</code></td>
+            <td>В пакете + наследники</td>
+            <td>Для наследования (изучим позже)</td>
+        </tr>
+        <tr>
+            <td><code>(default)</code></td>
+            <td>Только в пакете</td>
+            <td>Когда нет модификатора</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>💻 Пример: БЕЗ инкапсуляции (проблема)</h2>
+    <div class="code"><span class="keyword">public class</span> User {
+        String username;      <span class="comment">// ← public (по умолчанию)</span>
+        String password;      <span class="comment">// ← Любой может изменить!</span>
+        <span class="keyword">int</span> age;
+        }
+
+        <span class="comment">// В другом классе:</span>
+        User user = <span class="keyword">new</span> User();
+        user.password = <span class="string">"123"</span>;  <span class="comment">// 😱 Пароль изменён без проверки!</span>
+        user.age = -50;         <span class="comment">// 😱 Отрицательный возраст!</span></div>
+
+    <div class="warning">
+        <strong>⚠️ Проблема:</strong> Поля доступны всем → данные можно испортить случайно или намеренно!
+    </div>
+
+    <h2>💻 Пример: С инкапсуляцией (решение)</h2>
+    <div class="code"><span class="keyword">public class</span> User {
+        <span class="modifier">private</span> String username;
+        <span class="modifier">private</span> String password;
+        <span class="modifier">private</span> <span class="keyword">int</span> age;
+
+        <span class="comment">// 🔥 Геттер (getter) — чтение</span>
+        <span class="keyword">public</span> String getPassword() {
+        <span class="keyword">return</span> password;
+        }
+
+        <span class="comment">// 🔥 Сеттер (setter) — запись с проверкой</span>
+        <span class="keyword">public</span> <span class="keyword">void</span> setPassword(String password) {
+        <span class="keyword">if</span> (password.length() >= 8) {
+        <span class="keyword">this</span>.password = password;
+        } <span class="keyword">else</span> {
+        System.out.println(<span class="string">"Error: Password must be 8+ characters!"</span>);
+        }
+        }
+
+        <span class="comment">// 🔥 Сеттер с валидацией возраста</span>
+        <span class="keyword">public</span> <span class="keyword">void</span> setAge(<span class="keyword">int</span> age) {
+        <span class="keyword">if</span> (age >= 0 && age <= 150) {
+        <span class="keyword">this</span>.age = age;
+        } <span class="keyword">else</span> {
+        System.out.println(<span class="string">"Error: Invalid age!"</span>);
+        }
+        }
+        }</div>
+
+    <h2>📋 Геттеры и Сеттеры</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Метод</th>
+            <th>Назначение</th>
+            <th>Возвращает</th>
+            <th>Пример</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><strong>Getter</strong></td>
+            <td>Чтение значения поля</td>
+            <td>Тип поля</td>
+            <td><code>getPassword()</code></td>
+        </tr>
+        <tr>
+            <td><strong>Setter</strong></td>
+            <td>Запись значения с проверкой</td>
+            <td><code>void</code></td>
+            <td><code>setPassword(String pwd)</code></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="tip">
+        <strong>💡 Совет:</strong> Именование геттеров/сеттеров:<br>
+        • Геттер: <code>get</code> + ИмяПоля с заглавной → <code>getUsername()</code><br>
+        • Сеттер: <code>set</code> + ИмяПоля с заглавной → <code>setUsername(String name)</code><br>
+        • Для boolean: <code>isActive()</code> или <code>getActive()</code>
+    </div>
+
+    <h2>🔗 Зачем это в Full-stack?</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Сценарий</th>
+            <th>Пример</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><strong>Безопасность</strong></td>
+            <td>Пароли, токены, личные данные скрыты от прямого доступа</td>
+        </tr>
+        <tr>
+            <td><strong>Валидация</strong></td>
+            <td>Проверка данных перед записью (возраст, email, цена)</td>
+        </tr>
+        <tr>
+            <td><strong>Гибкость</strong></td>
+            <td>Можно изменить внутреннюю логику, не ломая внешний код</td>
+        </tr>
+        <tr>
+            <td><strong>DTO/Entity</strong></td>
+            <td>Модели данных в Spring/Hibernate используют геттеры/сеттеры</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>🔑 Ключевые правила</h2>
+    <ul>
+        <li>Поля класса должны быть <code>private</code> (скрыты от внешнего мира)</li>
+        <li>Для доступа к полям используй <code>public</code> геттеры и сеттеры</li>
+        <li>В сеттерах добавляй валидацию данных (проверки)</li>
+        <li>Геттеры только читают данные (не меняют состояние)</li>
+        <li>Если поле не должно меняться — не создавай сеттер (только геттер)</li>
+    </ul>
+
+    <div class="tip">
+        <strong>💡 Совет:</strong> В IntelliJ IDEA: <code>Code → Generate → Getter and Setter</code> (Alt+Insert) создаст их автоматически!
+    </div>
+
+    <div class="footer">
+        <p>📄 Сохрани этот файл для повторения | 🗓️ Дата: 26.03.2026 | 🎯 Модуль 6: OOP — Part 3</p>
+        <p class="author">👨‍💻 Автор: NT4H</p>
+    </div>
+</div>
+</body>
+</html>

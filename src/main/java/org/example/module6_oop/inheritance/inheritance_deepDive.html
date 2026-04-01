@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Module 6 Part 4: Inheritance & Polymorphism</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; background: #f4f4f9; color: #333; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 30px; }
+        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        pre { white-space: pre; font-family: 'Consolas', 'Monaco', monospace; font-size: 14px; }
+        .highlight { color: #f1c40f; }
+        .keyword { color: #ff79c6; }
+        .type { color: #8be9fd; }
+        .method { color: #50fa7b; }
+        .comment { color: #6272a4; }
+        .hierarchy { background: #fff; border: 1px solid #ddd; padding: 10px; font-family: monospace; white-space: pre; overflow-x: auto; }
+        footer { margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 0.9em; color: #777; text-align: center; }
+        .note { background: #fff3cd; border-left: 5px solid #ffc107; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<h1>🎯 Module 6 Part 4: Inheritance & Polymorphism</h1>
+<p>Добро пожаловать в мир переиспользования кода и гибкости!</p>
+
+<h2>1. Что такое Наследование (Inheritance)?</h2>
+<p>Представь, что ты создаешь игру. У тебя есть <b>Воин</b>, <b>Маг</b> и <b>Лучник</b>. У всех них есть здоровье, имя и умение двигаться. Писать эти поля три раза — скучно и неправильно (нарушает DRY).</p>
+<p>Мы создаем общего <b>Родителя (Superclass)</b>, а остальные будут его <b>Детьми (Subclass)</b>.</p>
+
+<div class="hierarchy">
+    📂 Person (Родитель)
+    └── 📂 Employee (Ребенок)
+    ├── 📂 Manager
+    └── 📂 Intern
+</div>
+
+<p>В Java это делается через ключевое слово <span class="keyword">extends</span>.</p>
+
+<div class="code-block">
+<pre><span class="keyword">class</span> <span class="type">Person</span> {
+    <span class="keyword">protected</span> String name; <span class="comment">// protected виден детям, но скрыт от чужих</span>
+
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="method">walk</span>() {
+        System.out.println(name + <span class="highlight">" идет"</span>);
+    }
+}
+
+<span class="keyword">class</span> <span class="type">Employee</span> <span class="keyword">extends</span> <span class="type">Person</span> { <span class="comment">// Наследование</span>
+    <span class="keyword">private</span> <span class="type">int</span> employeeId;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="method">work</span>() {
+        System.out.println(name + <span class="highlight">" работает"</span>); <span class="comment">// name доступен!</span>
+    }
+}</pre>
+</div>
+
+<div class="note">
+    ⚠️ <b>Важно:</b> В Java нет множественного наследования классов (класс не может иметь двух родителей). Но интерфейс мы изучим позже.
+</div>
+
+<h2>2. Ключевое слово super</h2>
+<p>Иногда нужно обратиться к родителю. Например, вызвать его конструктор или переопределенный метод.</p>
+<ul>
+    <li><code>super()</code> — вызов конструктора родителя (должен быть <b>первой строкой</b>).</li>
+    <li><code>super.method()</code> — вызов метода родителя.</li>
+</ul>
+
+<div class="code-block">
+<pre><span class="keyword">class</span> <span class="type">Employee</span> <span class="keyword">extends</span> <span class="type">Person</span> {
+    <span class="keyword">public</span> <span class="type">Employee</span>(String name, <span class="type">int</span> id) {
+        <span class="keyword">super</span>(name); <span class="comment">// Вызываем конструктор Person</span>
+        <span class="keyword">this</span>.employeeId = id;
+    }
+}</pre>
+</div>
+
+<h2>3. Переопределение методов (Overriding)</h2>
+<p>Ребенок может изменить поведение родителя. Например, все <b>Звери</b> издают звук, но <b>Собака</b> лает, а <b>Кот</b> мяукает.</p>
+<p>Используем аннотацию <span class="keyword">@Override</span>. Это сигнал компилятору: "Я точно меняю метод родителя!".</p>
+
+<div class="code-block">
+<pre><span class="keyword">class</span> <span class="type">Dog</span> <span class="keyword">extends</span> <span class="type">Animal</span> {
+    <span class="keyword">@Override</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> <span class="method">makeSound</span>() {
+        System.out.println(<span class="highlight">"Гав!"</span>);
+    }
+}</pre>
+</div>
+
+<h2>4. Полиморфизм (Polymorphism)</h2>
+<p>Способность объекта принимать разные формы. Самая частая форма: <b>Ссылка типа Родитель указывает на Объект типа Ребенок</b>.</p>
+
+<div class="code-block">
+<pre><span class="type">Animal</span> myPet = <span class="keyword">new</span> <span class="type">Dog</span>(); <span class="comment">// Полиморфизм!</span>
+myPet.makeSound(); <span class="comment">// Вызовется метод Dog ("Гав!"), а не Animal</span></pre>
+</div>
+<p>Зачем это нужно? Ты можешь создать массив <code>Animal[]</code> и хранить там и собак, и котов, и вызывать у них <code>makeSound()</code>, не заботясь о конкретном типе.</p>
+
+<h2>5. Иерархия и доступ (Access Modifiers)</h2>
+<table border="1" cellpadding="10" cellspacing="0" style="width:100%; border-collapse: collapse;">
+    <tr style="background:#eee;">
+        <th>Модификатор</th>
+        <th>Внутри класса</th>
+        <th>В пакете</th>
+        <th>В наследнике</th>
+        <th>Везде</th>
+    </tr>
+    <tr>
+        <td>private</td>
+        <td>✅</td>
+        <td>❌</td>
+        <td>❌</td>
+        <td>❌</td>
+    </tr>
+    <tr>
+        <td>protected</td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>❌</td>
+    </tr>
+    <tr>
+        <td>public</td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>✅</td>
+    </tr>
+</table>
+<p>Для наследования чаще всего используем <code>protected</code> для полей, которые должны видеть дети.</p>
+
+<footer>
+    👨‍💻 Автор: NT4H <br>
+    Universal AI Mentor Engine v1.0
+</footer>
+</body>
+</html>

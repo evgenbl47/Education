@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Java Theory: Encapsulation</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3436; max-width: 850px; margin: 30px auto; padding: 0 25px; background-color: #f9f9f9; }
+        .container { background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #0984e3; border-bottom: 3px solid #74b9ff; padding-bottom: 10px; }
+        h3 { color: #d63031; margin-top: 25px; }
+        code { background: #dfe6e9; padding: 3px 6px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+        pre { background: #2d3436; color: #fab1a0; padding: 20px; border-radius: 8px; overflow-x: auto; white-space: pre; font-size: 0.95em; line-height: 1.4; }
+        .footer { margin-top: 60px; font-size: 0.85em; color: #636e72; border-top: 1px solid #dfe6e9; padding-top: 15px; text-align: center; }
+        .highlight { background-color: #fff3cd; padding: 2px 4px; border-radius: 3px; border: 1px solid #ffeeba; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Принцип Инкапсуляции</h1>
+    <p><b>Инкапсуляция</b> — это механизм скрытия внутренних деталей реализации объекта и защиты его состояния от прямого вмешательства извне. Мы объединяем данные (поля) и методы для работы с ними в одном классе.</p>
+
+    <h3>1. Зачем это нужно?</h3>
+    <ul>
+        <li><span class="highlight">Безопасность:</span> Никто не сможет записать в переменную <code>age</code> значение -500.</li>
+        <li><span class="highlight">Гибкость:</span> Ты можешь изменить внутреннюю логику хранения данных, не ломая код, который использует твой класс.</li>
+        <li><span class="highlight">Скрытие сложности:</span> Пользователь класса видит только простые методы (кнопки), а не весь "двигатель" внутри.</li>
+    </ul>
+
+    <h3>2. Реализация: private + методы</h3>
+    <p>Мы закрываем доступ к полям с помощью модификатора <code>private</code> и открываем "форточки" для доступа через <b>Getter</b> (чтение) и <b>Setter</b> (запись).</p>
+
+    <pre>
+public class BankAccount {
+    // Поле скрыто! Никто не украдет деньги напрямую
+    private double balance;
+
+    // Геттер: позволяем посмотреть баланс
+    public double getBalance() {
+        return balance;
+    }
+
+    // Сеттер: позволяем положить деньги, но только если сумма положительная
+    public void deposit(double amount) {
+        if (amount > 0) {
+            this.balance += amount;
+            System.out.println("Пополнено на: " + amount);
+        } else {
+            System.out.println("Ошибка: сумма должна быть больше 0");
+        }
+    }
+}
+        </pre>
+
+    <h3>3. Ключевое слово <code>this</code></h3>
+    <p>В сеттерах мы часто используем <code>this.fieldName = fieldName;</code>. Слово <code>this</code> указывает Java, что мы обращаемся именно к <b>полю класса</b>, а не к локальному параметру метода с таким же именем.</p>
+
+    <div class="footer">
+        <p>👨‍💻 Автор: NT4H | Universal AI Mentor Engine v1.0</p>
+    </div>
+</div>
+</body>
+</html>

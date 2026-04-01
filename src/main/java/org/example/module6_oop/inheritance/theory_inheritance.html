@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java OOP: Inheritance (Наследование)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 25px; }
+        h3 { color: #16a085; }
+        .analogy {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            white-space: pre;
+        }
+        .code .keyword { color: #f92672; }
+        .code .type { color: #66d9ef; }
+        .code .string { color: #a6e22e; }
+        .code .comment { color: #75715e; }
+        .code .modifier { color: #f92672; font-weight: bold; }
+        .code .annotation { color: #c5a5ff; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th { background: #3498db; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .tip {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+        .author {
+            color: #3498db;
+            font-weight: bold;
+        }
+                .hierarchy {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin: 10px 0;
+            white-space: pre;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🧬 Inheritance (Наследование)</h1>
+    <p><strong>Модуль:</strong> Module 6: OOP — Part 4</p>
+    <p><strong>Задача:</strong> inheritance_userRoles</p>
+    <p><strong>Тема:</strong> Создание иерархии классов через extends</p>
+
+    <h2>🧠 Что такое наследование?</h2>
+    <p><strong>Наследование</strong> — это механизм, позволяющий одному классу (потомку) наследовать поля и методы другого класса (родителя).</p>
+
+    <div class="analogy">
+        <strong>💡 Аналогия:</strong> Семья 👨‍👩‍👧‍👦<br>
+        • <strong>Родитель:</strong> передаёт детям фамилию, цвет глаз, привычки<br>
+        • <strong>Ребёнок:</strong> получает всё от родителя + может иметь свои уникальные черты<br>
+        • <strong>Полиморфизм:</strong> один и тот же метод «говорить» работает по-разному у разных людей
+    </div>
+
+    <h2>📊 Иерархия классов (пример)</h2>
+    <pre class="hierarchy">
+                    Object (корень всех классов)
+                        │
+                        ▼
+                    User (родитель)
+                   /     |     \
+                  ▼      ▼      ▼
+              Admin   Guest  Moderator
+              (потомки)
+        </pre>
+
+    <h2>🔑 Ключевые слова</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Ключевое слово</th>
+            <th>Назначение</th>
+            <th>Пример</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><code>extends</code></td>
+            <td>Наследование от родительского класса</td>
+            <td><code>class Admin extends User</code></td>
+        </tr>
+        <tr>
+            <td><code>super</code></td>
+            <td>Обращение к методам/конструкторам родителя</td>
+            <td><code>super.username</code>, <code>super(...)</code></td>
+        </tr>
+        <tr>
+            <td><code>@Override</code></td>
+            <td>Переопределение метода родителя в потомке</td>
+            <td><code>@Override public void printInfo()</code></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>💻 Пример: Родительский класс</h2>
+    <div class="code"><span class="keyword">public class</span> User {
+        <span class="modifier">private</span> String username;
+        <span class="modifier">private</span> String email;
+
+        <span class="keyword">public</span> <span class="type">User</span>(String username, String email) {
+        <span class="keyword">this</span>.username = username;
+        <span class="keyword">this</span>.email = email;
+        }
+
+        <span class="keyword">public</span> String getUsername() { <span class="keyword">return</span> username; }
+        <span class="keyword">public</span> String getEmail() { <span class="keyword">return</span> email; }
+
+        <span class="keyword">public</span> <span class="keyword">void</span> printInfo() {
+        System.out.println(<span class="string">"User: "</span> + username + <span class="string">" ("</span> + email + <span class="string">")"</span>);
+        }
+        }</div>
+
+    <h2>💻 Пример: Класс-потомок</h2>
+    <div class="code"><span class="keyword">public class</span> Admin <span class="keyword">extends</span> User {
+        <span class="modifier">private</span> <span class="keyword">boolean</span> canDeleteUsers;
+
+        <span class="comment">// 🔥 Конструктор потомка</span>
+        <span class="keyword">public</span> <span class="type">Admin</span>(String username, String email, <span class="keyword">boolean</span> canDelete) {
+        <span class="keyword">super</span>(username, email);  <span class="comment">// Вызов конструктора родителя</span>
+        <span class="keyword">this</span>.canDeleteUsers = canDelete;
+        }
+
+        <span class="comment">// 🔥 Геттер для нового поля</span>
+        <span class="keyword">public</span> <span class="keyword">boolean</span> canDeleteUsers() {
+        <span class="keyword">return</span> canDeleteUsers;
+        }
+
+        <span class="comment">// 🔥 Переопределение метода родителя</span>
+        <span class="annotation">@Override</span>
+        <span class="keyword">public</span> <span class="keyword">void</span> printInfo() {
+        <span class="keyword">super</span>.printInfo();  <span class="comment">// Вызов метода родителя</span>
+        System.out.println(<span class="string">"Role: ADMIN"</span>);
+        System.out.println(<span class="string">"Can delete users: "</span> + canDeleteUsers);
+        }
+
+        <span class="comment">// 🔥 Уникальный метод потомка</span>
+        <span class="keyword">public</span> <span class="keyword">void</span> deleteUser(User user) {
+        <span class="keyword">if</span> (canDeleteUsers) {
+        System.out.println(<span class="string">"Deleted user: "</span> + user.getUsername());
+        }
+        }
+        }</div>
+
+    <h2>📋 Правила наследования</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Правило</th>
+            <th>Объяснение</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><strong>Один родитель</strong></td>
+            <td>Класс может наследовать только от <strong>одного</strong> класса (но от многих интерфейсов)</td>
+        </tr>
+        <tr>
+            <td><strong>private не наследуется</strong></td>
+            <td>Приватные поля/методы родителя <strong>не видны</strong> в потомке (но существуют!)</td>
+        </tr>
+        <tr>
+            <td><strong>super() первым</strong></td>
+            <td>Если в конструкторе потомка есть <code>super(...)</code>, он должен быть <strong>первой строкой</strong></td>
+        </tr>
+        <tr>
+            <td><strong>@Override опционален</strong></td>
+            <td>Аннотация не обязательна, но помогает компилятору найти ошибки</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="warning">
+        <strong>⚠️ Важно:</strong> Если у родителя нет конструктора без параметров, потомок <strong>обязан</strong> явно вызвать <code>super(...)</code>!
+    </div>
+
+    <h2>🔁 Полиморфизм (базовое понятие)</h2>
+    <p><strong>Полиморфизм</strong> — возможность использовать объект потомка там, где ожидается объект родителя.</p>
+
+    <div class="code"><span class="comment">// ✅ Полиморфизм: Admin «является» User</span>
+        User user1 = <span class="keyword">new</span> User(<span class="string">"guest"</span>, <span class="string">"g@example.com"</span>);
+        User user2 = <span class="keyword">new</span> Admin(<span class="string">"admin"</span>, <span class="string">"a@example.com"</span>, <span class="keyword">true</span>);  <span class="comment">// ← Admin как User!</span>
+
+        user1.printInfo();  <span class="comment">// Вызовет User.printInfo()</span>
+        user2.printInfo();  <span class="comment">// Вызовет Admin.printInfo() (переопределённый)!</span></div>
+
+    <div class="tip">
+        <strong>💡 Совет:</strong> Полиморфизм позволяет писать гибкий код:<br>
+        <code>public void register(User u)</code> примет и <code>User</code>, и <code>Admin</code>, и <code>Guest</code>!
+    </div>
+
+    <h2>🔗 Зачем это в Full-stack?</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Сценарий</th>
+            <th>Пример</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><strong>Роли пользователей</strong></td>
+            <td>User → Admin, Moderator, Guest с разными правами</td>
+        </tr>
+        <tr>
+            <td><strong>Типы платежей</strong></td>
+            <td>Payment → CreditCard, PayPal, Crypto</td>
+        </tr>
+        <tr>
+            <td><strong>Spring Framework</strong></td>
+            <td>Контроллеры, сервисы, репозитории — всё строится на наследовании</td>
+        </tr>
+        <tr>
+            <td><strong>Тестирование</strong></td>
+            <td>Mock-объекты наследуют интерфейсы для подмены зависимостей</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>🔑 Ключевые правила</h2>
+    <ul>
+        <li>Используй <code>extends</code> для создания иерархии «является» (Admin <strong>is a</strong> User)</li>
+        <li>Вызывай <code>super(...)</code> в конструкторе потомка для инициализации полей родителя</li>
+        <li>Используй <code>@Override</code> при переопределении методов — это защита от опечаток</li>
+        <li>Через <code>super.method()</code> можно вызвать оригинальную версию метода родителя</li>
+        <li>Полиморфизм: переменная типа родителя может ссылаться на объект потомка</li>
+    </ul>
+
+    <div class="tip">
+        <strong>💡 Совет:</strong> В IntelliJ IDEA: <code>Code → Override Methods</code> (Ctrl+O) покажет список методов для переопределения!
+    </div>
+
+    <div class="footer">
+        <p>📄 Сохрани этот файл для повторения | 🗓️ Дата: 26.03.2026 | 🎯 Модуль 6: OOP — Part 4</p>
+        <p class="author">👨‍💻 Автор: NT4H</p>
+    </div>
+</div>
+</body>
+</html>

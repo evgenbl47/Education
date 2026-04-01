@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java OOP: Constructor Overloading</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 25px; }
+        h3 { color: #16a085; }
+        .analogy {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            white-space: pre;
+        }
+        .code .keyword { color: #f92672; }
+        .code .type { color: #66d9ef; }
+        .code .string { color: #a6e22e; }
+        .code .comment { color: #75715e; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th { background: #3498db; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .tip {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+        .author {
+            color: #3498db;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔧 Constructor Overloading (Перегрузка конструкторов)</h1>
+    <p><strong>Модуль:</strong> Module 6: OOP — Part 2</p>
+    <p><strong>Тема:</strong> Гибкая инициализация объектов</p>
+
+    <h2>🧠 Что это такое?</h2>
+    <p><strong>Перегрузка конструкторов</strong> — это когда в классе есть <strong>несколько конструкторов</strong> с разными параметрами.</p>
+
+    <div class="analogy">
+        <strong>💡 Аналогия:</strong> Заказ пиццы 🍕<br>
+        • <strong>Полная:</strong> тесто + соус + сыр + начинка<br>
+        • <strong>Базовая:</strong> тесто + соус (начинка по умолчанию)<br>
+        • <strong>По умолчанию:</strong> стандартная пицца без параметров<br>
+        <em>И то, и то — пицца! Просто разная комплектация.</em>
+    </div>
+
+    <h2>💻 Пример кода</h2>
+    <div class="code"><span class="keyword">public class</span> Pizza {
+        String dough;
+        String sauce;
+        String topping;
+
+        <span class="comment">// 🔥 Конструктор 1: Полная пицца</span>
+        <span class="keyword">public</span> <span class="type">Pizza</span>(String dough, String sauce, String topping) {
+        <span class="keyword">this</span>.dough = dough;
+        <span class="keyword">this</span>.sauce = sauce;
+        <span class="keyword">this</span>.topping = topping;
+        }
+
+        <span class="comment">// 🔥 Конструктор 2: Базовая (без начинки)</span>
+        <span class="keyword">public</span> <span class="type">Pizza</span>(String dough, String sauce) {
+        <span class="keyword">this</span>(dough, sauce, <span class="string">"No topping"</span>);  <span class="comment">// Вызов конструктора 1</span>
+        }
+
+        <span class="comment">// 🔥 Конструктор 3: По умолчанию</span>
+        <span class="keyword">public</span> <span class="type">Pizza</span>() {
+        <span class="keyword">this</span>(<span class="string">"Standard"</span>, <span class="string">"Tomato"</span>, <span class="string">"Cheese"</span>);  <span class="comment">// Вызов конструктора 1</span>
+        }
+        }</div>
+
+    <h2>📋 Как Java выбирает конструктор?</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Вызов</th>
+            <th>Какой конструктор сработает</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><code>new Pizza("Thin", "Tomato", "Pepperoni")</code></td>
+            <td>Конструктор с <strong>3 параметрами</strong></td>
+        </tr>
+        <tr>
+            <td><code>new Pizza("Thin", "Tomato")</code></td>
+            <td>Конструктор с <strong>2 параметрами</strong></td>
+        </tr>
+        <tr>
+            <td><code>new Pizza()</code></td>
+            <td>Конструктор <strong>без параметров</strong></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="warning">
+        <strong>⚠️ Важно:</strong> Конструкторы должны отличаться <strong>количеством</strong> или <strong>типом</strong> параметров!
+    </div>
+
+    <h2>🔗 Зачем это в Full-stack?</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Сценарий</th>
+            <th>Пример</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><strong>Гибкость</strong></td>
+            <td>Клиент создаёт объект с полными или минимальными данными</td>
+        </tr>
+        <tr>
+            <td><strong>Значения по умолчанию</strong></td>
+            <td>Если параметр не передан — используется дефолтное значение</td>
+        </tr>
+        <tr>
+            <td><strong>Обратная совместимость</strong></td>
+            <td>Можно добавить новый конструктор, не ломая старый код</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>🔑 Ключевые правила</h2>
+    <ul>
+        <li><code>this(...)</code> вызывает другой конструктор <strong>этого же класса</strong></li>
+        <li><code>this(...)</code> должен быть <strong>первой строкой</strong> в конструкторе</li>
+        <li>Не путай: <code>this(...)</code> = вызов конструктора, <code>this.field</code> = поле объекта</li>
+        <li>Если не написать ни одного конструктора — Java создаст конструктор по умолчанию</li>
+        <li>Если написал конструктор с параметрами — по умолчанию <strong>не создаётся</strong></li>
+    </ul>
+
+    <div class="tip">
+        <strong>💡 Совет:</strong> Используй <code>this(...)</code>, чтобы не дублировать код инициализации. Все конструкторы → одна логика → легче поддерживать!
+    </div>
+
+    <div class="footer">
+        <p>📄 Сохрани этот файл для повторения | 🗓️ Дата: 26.03.2026 | 🎯 Модуль 6: OOP</p>
+        <p class="author">👨‍💻 Автор: NT4H</p>
+    </div>
+</div>
+</body>
+</html>
