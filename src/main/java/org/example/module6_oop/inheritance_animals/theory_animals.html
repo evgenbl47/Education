@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Practice: Inheritance & Casting (Animals)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #27ae60;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #27ae60;
+            margin-top: 30px;
+        }
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #444;
+            margin: 15px 0;
+        }
+        pre {
+            white-space: pre;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .keyword { color: #c678dd; font-weight: bold; }
+        .type { color: #e5c07b; }
+        .method { color: #61afef; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .box {
+            background: #fff;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tip {
+            background: #e8f8f0;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #27ae60;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .hierarchy {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border: 2px dashed #27ae60;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 16px;
+        }
+        footer {
+            margin-top: 60px;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🐾 Practice: Inheritance & Casting (Animals)</h1>
+<p>Закрепляем тему на примере иерархии животных.</p>
+
+<div class="box">
+    <h3>🎯 Цель задачи</h3>
+    <p>Создать базовый класс <code>Animal</code> и двух наследников: <code>Dog</code> и <code>Cat</code>. Отработать:</p>
+    <ul>
+        <li>✅ <code>extends</code> — наследование</li>
+        <li>✅ <code>super(...)</code> — вызов конструктора родителя</li>
+        <li>✅ <code>@Override</code> — переопределение методов</li>
+        <li>✅ Полиморфизм — массив <code>Animal[]</code></li>
+        <li>✅ <code>instanceof</code> + <code>casting</code> — вызов уникальных методов</li>
+    </ul>
+</div>
+
+<h2>1. Иерархия классов</h2>
+
+<div class="hierarchy">
+    <pre>
+    🐕 Animal (Базовый класс)
+    /           \
+    /             \
+    🐕 Dog          🐱 Cat
+    (Наследник)     (Наследник)
+    </pre>
+</div>
+
+<h2>2. Базовый класс Animal</h2>
+
+<div class="code-block">
+<pre><span class="keyword">public class</span> <span class="type">Animal</span> {
+    <span class="keyword">protected</span> String name;       <span class="comment">// Имя животного</span>
+    <span class="keyword">protected</span> <span class="type">int</span> age;            <span class="comment">// Возраст в годах</span>
+    <span class="keyword">protected</span> String color;       <span class="comment">// Цвет шерсти</span>
+
+    <span class="keyword">public</span> <span class="type">Animal</span>(String name, <span class="type">int</span> age, String color) {
+        <span class="keyword">this</span>.name = name;
+        <span class="keyword">this</span>.age = age;
+        <span class="keyword">this</span>.color = color;
+    }
+
+    <span class="keyword">public</span> String <span class="method">getType</span>() {
+        <span class="keyword">return</span> <span class="string">"Animal"</span>;
+    }
+
+    <span class="keyword">public void</span> <span class="method">makeSound</span>() {
+        System.out.println(<span class="string">"Some animal sound"</span>);
+    }
+
+    <span class="keyword">public void</span> <span class="method">showInfo</span>() {
+        System.out.println(<span class="string">"Animal: "</span> + name +
+                          <span class="string">", age: "</span> + age +
+                          <span class="string">", color: "</span> + color);
+    }
+}</pre>
+</div>
+
+<h2>3. Класс Dog (наследник)</h2>
+
+<div class="code-block">
+<pre><span class="keyword">public class</span> <span class="type">Dog</span> <span class="keyword">extends</span> <span class="type">Animal</span> {
+    <span class="keyword">private</span> String breed;         <span class="comment">// Порода собаки</span>
+    <span class="keyword">private</span> <span class="type">boolean</span> isTrained;    <span class="comment">// Обучен ли</span>
+
+    <span class="keyword">public</span> <span class="type">Dog</span>(String name, <span class="type">int</span> age, String color,
+               String breed, <span class="type">boolean</span> isTrained) {
+        <span class="keyword">super</span>(name, age, color);  <span class="comment">// 👈 ПЕРВАЯ СТРОКА!</span>
+        <span class="keyword">this</span>.breed = breed;
+        <span class="keyword">this</span>.isTrained = isTrained;
+    }
+
+    <span class="keyword">@Override</span>
+    <span class="keyword">public</span> String <span class="method">getType</span>() {
+        <span class="keyword">return</span> <span class="string">"Dog"</span>;
+    }
+
+    <span class="keyword">@Override</span>
+    <span class="keyword">public void</span> <span class="method">makeSound</span>() {
+        System.out.println(<span class="string">"🐕 Woof! Woof!"</span>);
+    }
+
+    <span class="keyword">@Override</span>
+    <span class="keyword">public void</span> <span class="method">showInfo</span>() {
+        System.out.println(<span class="string">"🐕 Dog: "</span> + name +
+                          <span class="string">", age: "</span> + age +
+                          <span class="string">", breed: "</span> + breed +
+                          <span class="string">", trained: "</span> + isTrained);
+    }
+
+    <span class="keyword">public void</span> <span class="method">fetch</span>() {
+        System.out.println(<span class="string">"🎾 Dog brings the ball back!"</span>);
+    }
+}</pre>
+</div>
+
+<h2>4. Класс Cat (наследник)</h2>
+
+<div class="code-block">
+<pre><span class="keyword">public class</span> <span class="type">Cat</span> <span class="keyword">extends</span> <span class="type">Animal</span> {
+    <span class="keyword">private</span> <span class="type">boolean</span> isIndoor;     <span class="comment">// Домашний или уличный</span>
+    <span class="keyword">private</span> <span class="type">int</span> livesLeft;        <span class="comment">// Осталось жизней (9 максимум)</span>
+
+    <span class="keyword">public</span> <span class="type">Cat</span>(String name, <span class="type">int</span> age, String color,
+               <span class="type">boolean</span> isIndoor, <span class="type">int</span> livesLeft) {
+        <span class="keyword">super</span>(name, age, color);  <span class="comment">// 👈 ПЕРВАЯ СТРОКА!</span>
+        <span class="keyword">this</span>.isIndoor = isIndoor;
+        <span class="keyword">this</span>.livesLeft = livesLeft;
+    }
+
+    <span class="keyword">@Override</span>
+    <span class="keyword">public</span> String <span class="method">getType</span>() {
+        <span class="keyword">return</span> <span class="string">"Cat"</span>;
+    }
+
+    <span class="keyword">@Override</span>
+    <span class="keyword">public void</span> <span class="method">makeSound</span>() {
+        System.out.println(<span class="string">"🐱 Meow! Meow!"</span>);
+    }
+
+    <span class="keyword">@Override</span>
+    <span class="keyword">public void</span> <span class="method">showInfo</span>() {
+        System.out.println(<span class="string">"🐱 Cat: "</span> + name +
+                          <span class="string">", age: "</span> + age +
+                          <span class="string">", indoor: "</span> + isIndoor +
+                          <span class="string">", lives: "</span> + livesLeft);
+    }
+
+    <span class="keyword">public void</span> <span class="method">scratch</span>() {
+        System.out.println(<span class="string">"🛋️ Cat scratches the furniture!"</span>);
+    }
+}</pre>
+</div>
+
+<h2>5. Демонстрация полиморфизма</h2>
+
+<div class="code-block">
+<pre><span class="comment">// Массив типа Animal — полиморфизм!</span>
+<span class="type">Animal</span>[] pets = <span class="keyword">new</span> <span class="type">Animal</span>[3];
+pets[0] = <span class="keyword">new</span> <span class="type">Animal</span>(<span class="string">"Generic"</span>, 5, <span class="string">"Gray"</span>);
+pets[1] = <span class="keyword">new</span> <span class="type">Dog</span>(<span class="string">"Rex"</span>, 3, <span class="string">"Brown"</span>, <span class="string">"Labrador"</span>, <span class="keyword">true</span>);
+pets[2] = <span class="keyword">new</span> <span class="type">Cat</span>(<span class="string">"Murka"</span>, 2, <span class="string">"Black"</span>, <span class="keyword">true</span>, 7);
+
+<span class="comment">// Вызов showInfo() — каждый объект покажет свою версию</span>
+<span class="keyword">for</span> (<span class="type">Animal</span> a : pets) {
+    a.showInfo();      <span class="comment">// Динамическое связывание!</span>
+    a.makeSound();     <span class="comment">// Вызовется версия конкретного класса</span>
+}</pre>
+</div>
+
+<h2>6. Приведение типов (Casting)</h2>
+
+<div class="code-block">
+<pre><span class="comment">// Чтобы вызвать уникальный метод, нужно приведение!</span>
+<span class="keyword">for</span> (<span class="type">Animal</span> a : pets) {
+    <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="type">Dog</span>) {
+        <span class="type">Dog</span> d = (<span class="type">Dog</span>) a;  <span class="comment">// 👈 Приведение</span>
+        d.fetch();        <span class="comment">// 👈 Теперь доступно!</span>
+    }
+    <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="type">Cat</span>) {
+        <span class="type">Cat</span> c = (<span class="type">Cat</span>) a;
+        c.scratch();
+    }
+}</pre>
+</div>
+
+<div class="tip">
+    <b>💡 Важно:</b> Без <code>instanceof</code> и <code>casting</code> компилятор не разрешит вызвать <code>fetch()</code> или <code>scratch()</code>, потому что у типа <code>Animal</code> этих методов нет!
+</div>
+
+<h2>7. Ожидаемый вывод</h2>
+
+<table>
+    <tr>
+        <th>Секция</th>
+        <th>Пример вывода</th>
+    </tr>
+    <tr>
+        <td>Creating Pets</td>
+        <td><code>=== Creating Pets ===</code></td>
+    </tr>
+    <tr>
+        <td>Polymorphism</td>
+        <td><code>🐕 Dog: Rex, age: 3, breed: Labrador, trained: true</code><br><code>🐕 Woof! Woof!</code></td>
+    </tr>
+    <tr>
+        <td>Type Check</td>
+        <td><code>Dog is Animal? true</code><br><code>Cat is Dog? false</code></td>
+    </tr>
+    <tr>
+        <td>Specific Methods</td>
+        <td><code>🎾 Dog brings the ball back!</code><br><code>🛋️ Cat scratches the furniture!</code></td>
+    </tr>
+</table>
+
+<h2>8. Чеклист перед началом</h2>
+
+<div class="box">
+    <ul>
+        <li>□ Все поля в <code>Animal</code> — <code>protected</code></li>
+        <li>□ <code>super(...)</code> первой строкой в конструкторах наследников</li>
+        <li>□ <code>@Override</code> на переопределённых методах</li>
+        <li>□ Массив <code>Animal[]</code> для полиморфизма</li>
+        <li>□ <code>instanceof</code> перед приведением типа</li>
+        <li>□ Код на английском 🇬🇧 / Комментарии на русском 🇷🇺</li>
+    </ul>
+</div>
+
+<footer>
+    👨‍💻 Автор: NT4H <br>
+    Universal AI Mentor Engine v1.0 <br>
+    <i>Сохраните этот файл в папке проекта для справки.</i>
+</footer>
+</body>
+</html>

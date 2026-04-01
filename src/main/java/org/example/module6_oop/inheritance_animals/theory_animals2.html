@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Module 6 Part 4: Inheritance & Casting (Theory)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #27ae60;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #27ae60;
+            margin-top: 30px;
+            border-left: 4px solid #27ae60;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #16a085;
+            margin-top: 25px;
+        }
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #444;
+            margin: 15px 0;
+        }
+        pre {
+            white-space: pre;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .keyword { color: #c678dd; font-weight: bold; }
+        .type { color: #e5c07b; }
+        .method { color: #61afef; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .box {
+            background: #fff;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tip {
+            background: #e8f8f0;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #27ae60;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .hierarchy {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border: 2px dashed #27ae60;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 16px;
+        }
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+        .step-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 40px;
+            margin: 10px 0;
+        }
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #27ae60;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        footer {
+            margin-top: 60px;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🐾 Module 6 Part 4: Inheritance & Casting</h1>
+<p>Теоретическая справка для практики <b>inheritance_animals</b></p>
+
+<div class="box">
+    <h3>🎯 Что ты должен сделать сам</h3>
+    <p>Этот документ объясняет <b>концепции</b>, но не даёт готовых классов. Твоя задача — написать код самостоятельно, используя эти знания.</p>
+    <ul>
+        <li>✅ Создай классы сам (Animal, Dog, Cat)</li>
+        <li>✅ Придумай поля и методы</li>
+        <li>✅ Реализуй логику по ТЗ</li>
+    </ul>
+</div>
+
+<h2>1. Что такое наследование?</h2>
+
+<p>Наследование позволяет создать новый класс на основе существующего. Новый класс получает все поля и методы родителя.</p>
+
+<div class="hierarchy">
+    <pre>
+    🐕 Animal (Родитель / Superclass)
+    /           \
+    /             \
+    🐕 Dog          🐱 Cat
+    (Child)        (Child)
+    </pre>
+</div>
+
+<h3>Зачем это нужно?</h3>
+<ul class="step-list">
+    <li><b>DRY (Don't Repeat Yourself)</b> — не пиши одно и то же в каждом классе</li>
+    <li><b>Иерархия</b> — логичная структура кода</li>
+    <li><b>Полиморфизм</b> — работа с разными типами через общую ссылку</li>
+</ul>
+
+<div class="code-block">
+<pre><span class="comment">// Общий синтаксис:</span>
+<span class="keyword">public class</span> <span class="type">Child</span> <span class="keyword">extends</span> <span class="type">Parent</span> {
+    <span class="comment">// Наследует всё от Parent</span>
+    <span class="comment">// + может иметь свои поля и методы</span>
+}</pre>
+</div>
+
+<div class="tip">
+    💡 <b>Важно:</b> В Java класс может наследоваться только от <b>одного</b> родителя.
+</div>
+
+<h2>2. Модификатор protected</h2>
+
+<p>Для наследования критически важен модификатор <code>protected</code>. Он делает поля видимыми для наследников, но скрытыми от внешнего кода.</p>
+
+<table>
+    <tr>
+        <th>Модификатор</th>
+        <th>В классе</th>
+        <th>В пакете</th>
+        <th>В наследнике</th>
+        <th>Везде</th>
+    </tr>
+    <tr>
+        <td><code>private</code></td>
+        <td>✅</td>
+        <td>❌</td>
+        <td>❌</td>
+        <td>❌</td>
+    </tr>
+    <tr>
+        <td><code>protected</code></td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>❌</td>
+    </tr>
+    <tr>
+        <td><code>public</code></td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>✅</td>
+    </tr>
+</table>
+
+<div class="code-block">
+<pre><span class="keyword">public class</span> <span class="type">Animal</span> {
+    <span class="keyword">protected</span> String name;  <span class="comment">// 👈 Видно в Dog и Cat</span>
+    <span class="keyword">protected</span> <span class="type">int</span> age;
+}</pre>
+</div>
+
+<h2>3. Ключевое слово super</h2>
+
+<p><code>super</code> используется для обращения к родителю. Чаще всего — для вызова конструктора.</p>
+
+<div class="code-block">
+<pre><span class="keyword">public class</span> <span class="type">Dog</span> <span class="keyword">extends</span> <span class="type">Animal</span> {
+    <span class="keyword">public</span> <span class="type">Dog</span>(String name, <span class="type">int</span> age, String breed) {
+        <span class="keyword">super</span>(name, age);  <span class="comment">// 👈 ПЕРВАЯ СТРОКА!</span>
+        <span class="keyword">this</span>.breed = breed;
+    }
+}</pre>
+</div>
+
+<div class="warning">
+    ⚠️ <b>Правило:</b> <code>super(...)</code> должен быть <b>первой строкой</b> в конструкторе наследника. Иначе компилятор выдаст ошибку.
+</div>
+
+<h3>Почему первая строка?</h3>
+<p>Логика: «Сначала построй фундамент (родитель), потом возводи стены (наследник)». Нельзя использовать объект, пока он не инициализирован полностью.</p>
+
+<h2>4. Переопределение методов (@Override)</h2>
+
+<p>Наследник может изменить поведение метода родителя. Для этого используется та же сигнатура (название + параметры).</p>
+
+<div class="code-block">
+<pre><span class="comment">// В классе Animal:</span>
+<span class="keyword">public void</span> <span class="method">makeSound</span>() {
+    System.out.println(<span class="string">"Some sound"</span>);
+}
+
+<span class="comment">// В классе Dog:</span>
+<span class="keyword">@Override</span>
+<span class="keyword">public void</span> <span class="method">makeSound</span>() {
+    System.out.println(<span class="string">"Woof!"</span>);  <span class="comment">// 👈 Своё поведение</span>
+}</pre>
+</div>
+
+<div class="tip">
+    💡 <b>@Override</b> — это аннотация-страховка. Если ты ошибёшься в названии метода, компилятор подскажет.
+</div>
+
+<h2>5. Полиморфизм</h2>
+
+<p>Полиморфизм — это возможность использовать объект наследника там, где ожидается объект родителя.</p>
+
+<div class="code-block">
+<pre><span class="type">Animal</span> myPet = <span class="keyword">new</span> <span class="type">Dog</span>(...);  <span class="comment">// 👈 Ссылка Animal, объект Dog</span>
+myPet.makeSound();  <span class="comment">// Вызовется версия Dog ("Woof!")</span></pre>
+</div>
+
+<h3>Зачем это нужно?</h3>
+<p>Ты можешь создать массив общего типа и хранить там разные объекты:</p>
+
+<div class="code-block">
+<pre><span class="type">Animal</span>[] pets = <span class="keyword">new</span> <span class="type">Animal</span>[3];
+pets[0] = <span class="keyword">new</span> <span class="type">Dog</span>(...);
+pets[1] = <span class="keyword">new</span> <span class="type">Cat</span>(...);
+pets[2] = <span class="keyword">new</span> <span class="type">Animal</span>(...);
+
+<span class="keyword">for</span> (<span class="type">Animal</span> a : pets) {
+    a.showInfo();  <span class="comment">// Каждый объект покажет свою версию!</span>
+}</pre>
+</div>
+
+<h2>6. Приведение типов (Casting)</h2>
+
+<p>Если у тебя есть ссылка типа родителя, но нужно вызвать метод наследника — требуется приведение типа.</p>
+
+<div class="code-block">
+<pre><span class="type">Animal</span> pet = <span class="keyword">new</span> <span class="type">Dog</span>(...);
+
+<span class="comment">// ❌ Не работает:</span>
+pet.fetch();  <span class="comment">// Ошибка: у Animal нет метода fetch()</span>
+
+<span class="comment">// ✅ Работает:</span>
+<span class="keyword">if</span> (pet <span class="keyword">instanceof</span> <span class="type">Dog</span>) {
+    <span class="type">Dog</span> d = (<span class="type">Dog</span>) pet;  <span class="comment">// 👈 Приведение</span>
+    d.fetch();          <span class="comment">// 👈 Теперь доступно!</span>
+}</pre>
+</div>
+
+<h3>Алгоритм безопасного casting:</h3>
+<ol class="step-list">
+    <li>Проверь тип: <code>if (obj instanceof Type)</code></li>
+    <li>Приведи тип: <code>Type t = (Type) obj;</code></li>
+    <li>Вызови метод: <code>t.specificMethod();</code></li>
+</ol>
+
+<div class="warning">
+    ⚠️ <b>Без instanceof:</b> Если привести тип неправильно, программа «упадёт» с <code>ClassCastException</code> во время выполнения.
+</div>
+
+<h2>7. Upcasting vs Downcasting</h2>
+
+<table>
+    <tr>
+        <th>Тип</th>
+        <th>Направление</th>
+        <th>Синтаксис</th>
+        <th>Безопасность</th>
+    </tr>
+    <tr>
+        <td><b>Upcasting</b></td>
+        <td>Ребёнок → Родитель</td>
+        <td><code>Animal a = new Dog();</code></td>
+        <td>✅ Автоматически</td>
+    </tr>
+    <tr>
+        <td><b>Downcasting</b></td>
+        <td>Родитель → Ребёнок</td>
+        <td><code>Dog d = (Dog) a;</code></td>
+        <td>⚠️ Требует instanceof</td>
+    </tr>
+</table>
+
+<h2>8. Шпаргалка для практики</h2>
+
+<div class="box">
+    <h3>✅ Чеклист перед началом кода</h3>
+    <ul class="step-list">
+        <li>Придумай поля для базового класса (общие для всех)</li>
+        <li>Придумай уникальные поля для каждого наследника</li>
+        <li>В конструкторах наследников: <code>super(...)</code> первой строкой</li>
+        <li>Переопредели методы с <code>@Override</code></li>
+        <li>В тесте: массив типа родителя + цикл для полиморфизма</li>
+        <li>Для уникальных методов: <code>instanceof</code> + casting</li>
+        <li>Код на английском 🇬🇧 / Комментарии на русском 🇷🇺</li>
+    </ul>
+</div>
+
+<div class="tip">
+    💡 <b>Совет:</b> Начни с базового класса. Проверь, что он компилируется. Потом добавляй наследников по одному.
+</div>
+
+<footer>
+    👨‍💻 Автор: NT4H <br>
+    Universal AI Mentor Engine v1.0 <br>
+    <i>Этот документ объясняет концепции. Код задачи ты пишешь сам!</i>
+</footer>
+</body>
+</html>
