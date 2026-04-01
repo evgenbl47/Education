@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Инкапсуляция в Java — MODULE_06_PART3</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+        h1, h2 { color: #2c3e50; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; white-space: pre; font-family: 'Courier New', monospace; }
+        code { background: #ecf0f1; padding: 2px 4px; border-radius: 3px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #3498db; color: white; }
+        .warning { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; }
+    </style>
+</head>
+<body>
+    <h1>👨‍💻 Инкапсуляция — MODULE_06_PART3</h1>
+    
+    <h2>Зачем это нужно?</h2>
+    <p><strong>Инкапсуляция</strong> — это как сейф: внутри ценности (данные), снаружи замок (методы). Прячем поля класса с <code>private</code>, даём доступ только через <strong>getters</strong> (чтение) и <strong>setters</strong> (запись с проверками).</p>
+    
+    <div class="warning">
+        <strong>Правило:</strong> Никогда не делай поля <code>public</code>! Всегда <code>private + getter/setter</code>.
+    </div>
+
+    <h2>Шаблон класса с инкапсуляцией</h2>
+    <pre>public class Product {
+    // 1. Поля PRIVATE
+    private String name;
+    private double price;
+    private int stock;
+    
+    // 2. GETTERS (только чтение)
+    public String getName() {
+        return name;
+    }
+    
+    public double getPrice() {
+        return price;
+    }
+    
+    // 3. SETTERS (запись + ВАЛИДАЦИЯ)
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Имя товара не может быть пустым!");
+        }
+        this.name = name.trim();  // this отличает поле от параметра
+    }
+    
+    public void setPrice(double price) {
+        if (price < 0) {
+            throw new IllegalArgumentException("Цена не может быть отрицательной!");
+        }
+        this.price = price;
+    }
+    
+    // 4. Бизнес-методы (работают с private полями)
+    public double getDiscountPrice() {
+        return price * 0.9;  // скидка 10%
+    }
+    
+    public boolean isInStock() {
+        return stock > 0;
+    }
+}</pre>
+
+    <h2>Ключевые отличия</h2>
+    <table>
+        <tr><th>Без инкапсуляции (ПЛОХО)</th><th>С инкапсуляцией (ХОРОШО)</th></tr>
+        <tr>
+            <td><pre>public String name;  // любой может испортить
+product.name = null;  // сломал объект</pre></td>
+            <td><pre>private String name;
+product.setName("");  // setter проверит и откажет</pre></td>
+        </tr>
+        <tr>
+            <td><pre>public double price;
+product.price = -100; // отрицательная цена?!</pre></td>
+            <td><pre>product.setPrice(-100);  // выбросит ошибку</pre></td>
+        </tr>
+    </table>
+
+    <h2>Важные правила</h2>
+    <ul>
+        <li><code>this.name = name;</code> — <code>this</code> отличает поле класса от параметра метода</li>
+        <li>Getter: <code>public Тип getИмя() { return поле; }</code></li>
+        <li>Setter: <code>public void setИмя(Тип имя) { проверки; this.поле = имя; }</code></li>
+        <li>Валидация в setter — защита от "дурных" данных</li>
+        <li>Можно иметь только getter (только чтение) или только setter (редко)</li>
+    </ul>
+
+    <hr>
+    <p><strong>👨‍💻 Автор: NT4H</strong> | Следующий шаг: 10 вопросов для контроля → Практика</p>
+</body>
+</html>
